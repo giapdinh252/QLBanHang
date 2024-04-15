@@ -17,7 +17,9 @@ public class NhanVien {
     private Date NgaySinh;
     private String SoDienThoai;
     private boolean GioiTinh;
-
+public NhanVien(){
+    
+}
     public NhanVien(int MaNhanVien, String TenNhanVien, String DiaChi, Date NgaySinh, String SoDienThoai, boolean GioiTinh) {
         this.MaNhanVien = MaNhanVien;
         this.TenNhanVien = TenNhanVien;

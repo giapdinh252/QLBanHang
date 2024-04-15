@@ -34,7 +34,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 320, Short.MAX_VALUE)
+            .addGap(0, 332, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 

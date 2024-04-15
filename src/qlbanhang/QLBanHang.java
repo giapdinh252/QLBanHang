@@ -19,9 +19,7 @@ public class QLBanHang {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-      new MainJFrame(); 
-        DBConnection connection = new DBConnection();
-        connection .getConnection();
+      new MainJFrame();   
 
 //        var server = "localhost";
 //var user = "sa";

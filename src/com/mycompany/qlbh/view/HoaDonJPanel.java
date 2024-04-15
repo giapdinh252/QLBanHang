@@ -6,8 +6,10 @@ package com.mycompany.qlbh.view;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import com.mycompany.qlbh.model.HoaDonBan;
+import com.mycompany.qlbh.model.KhachHang;
 import com.mycompany.qlbh.model.NhanVien;
-import com.sun.jdi.connect.spi.Connection;
+import com.mycompany.qlbh.view.MyDBConnection;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,54 +25,89 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Dinh Giap
  */
-public class HoaDonJPanel extends javax.swing.JPanel {
-    List<String> nhanvien = new ArrayList<>();
+public class HoaDonJPanel extends javax.swing.JPanel {   
     List<HoaDonBan> Hoadon = new ArrayList<>();
     /**
      * Creates new form HoaDonJPanel
      */
-    public void addHoaDonBan(){
+    
+    public void addHoaDonBan(){                   
     HoaDonBan hd = new HoaDonBan();
     hd.setNgayBan(txtNgayLap.getText());
     hd.setMaHoaDon(Integer.parseInt(txtHoaDonHD.getText()));
+    hd.setNhanvien(txtNhanVien.getSelectedItem().toString());
+    hd.setKhachhang(txtKhachHang.getSelectedItem().toString());
     hd.setTongTien(Double.parseDouble(txtTongTienHD.getText()));
     hd.setGhichu(GhiChuHoaDon.getText());
     Hoadon.add(hd);
+  
 }
-    public void showDetail(){
-        int i= TableHoaDon.getSelectedRow();
+   
+public void displayHoaDon(){
+    DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();   
+    int STT = model.getRowCount() + 1;
+    if (!Hoadon.isEmpty()) {
+        HoaDonBan hd = Hoadon.get(Hoadon.size() - 1); 
+        Object[] oj = new Object[]{
+            STT, hd.getMaHoaDon(), hd.getKhachhang(), hd.getNhanvien(), hd.getNgayBan(), hd.getTongTien(), hd.getGhichu()
+        };
+        model.addRow(oj);
+    }
+}
+public void showDetail(){
+        int i= TableHoaDon.getSelectedRow();            
         HoaDonBan hd=Hoadon.get(i);
-        txtHoaDonHD.setText(String.valueOf(hd.getMaHoaDon()));
+        txtHoaDonHD.setText(String.valueOf(hd.getMaHoaDon()));     
         GhiChuHoaDon.setText(hd.getGhichu());
+        txtNhanVien.setSelectedItem(hd.getNhanvien());
+        txtKhachHang.setSelectedItem(hd.getKhachhang());
         txtTongTienHD.setText(String.valueOf(hd.getTongTien()));
         txtNgayLap.setText(hd.getNgayBan());
         
     }
 
-public void displayHoaDon(){
-    DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();
-     model.setRowCount(0);
-    int STT = 1;
-    for(HoaDonBan hd : Hoadon){
-        Object[] oj = new Object[]{
-           STT++, hd.getMaHoaDon(), hd.getKhachhang(), hd.getNhanvien(), hd.getNgayBan(), hd.getTongTien(), hd.getGhichu()
-        };
-       
-        model.addRow(oj);
-    }
-}
-
     public HoaDonJPanel() {
         initComponents();
-   
+       
+        Showdulieu();
+        ThemNhanvien();
+       ThemKhachHang();
         
     }
     public void ThemNhanvien(){
-        nhanvien.add("dinh giap");
-        for(String kk : nhanvien){
-            txtNhanVien.addItem(kk);
-        }
+
+ Connection conn = new MyDBConnection().getConnection();
+try{             
+         Statement stmt = conn.createStatement();
+         String queryNV = "SELECT * FROM NhanVien";
+         ResultSet rsNV = stmt.executeQuery(queryNV);   
+            while (rsNV.next()) {               
+                txtNhanVien.addItem(rsNV.getString("TenNhanVien"));
+               
+            }
+            
+            
+    } catch (SQLException ex) {
+       
+        ex.printStackTrace();
     }
+    }
+    void ThemKhachHang(){
+         Connection conn = new MyDBConnection().getConnection();
+try{             
+         Statement stmt = conn.createStatement();        
+          String queryKH = "SELECT * FROM KhachHang"; 
+         ResultSet rsKH = stmt.executeQuery(queryKH);   
+                         
+             while (rsKH.next()) {               
+                txtKhachHang.addItem(rsKH.getString("TenKhachHang"));              
+            }           
+    } catch (SQLException ex) {
+       
+        ex.printStackTrace();
+    }
+    }
+   
     
 
     /**
@@ -193,14 +230,11 @@ public void displayHoaDon(){
             }
         });
 
-        txtNhanVien.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nguyen Dinh Giap", "Nguyễn Văn Khánh " }));
         txtNhanVien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNhanVienActionPerformed(evt);
             }
         });
-
-        txtKhachHang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nguyễn Thị Trang", "Nguyễn Đình Tùng" }));
 
         SuaHoaDon.setText("Sửa");
         SuaHoaDon.addActionListener(new java.awt.event.ActionListener() {
@@ -506,52 +540,6 @@ public void displayHoaDon(){
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
- private void Showdulieu() {
-  
-  
-   
-    DefaultTableModel model = (DefaultTableModel)TableHoaDon.getModel();
-    Connection conn = (Connection) DBConnection.getConnection();
-  
-        try{             
-         String query = "SELECT * FROM HoaDon"; 
-         Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery(query);      
-        
-          
-            while (rs.next()) {
-         
-                Object obj[]=new Object[10];
-
-                obj[0]=TableHoaDon.getRowCount()+1;
-                obj[1]=rs.getInt("MaHoaDon");
-                 obj[2]=rs.getInt("MaNhanVien");
-                  obj[3]=rs.getInt("MaKhachHang");
-                   obj[4]=rs.getDate("NgayLapHoaDon");
-                    obj[5]=rs.getString("TongTien");
-                     obj[6]=rs.getString("GhiChu");
-                     model.addRow(obj); 
-                   
-//                rowData.add(rs.getInt("MaHoaDon"));
-//                rowData.add(rs.getString("MaNhanVien"));
-//                rowData.add(rs.getString("MaKhachHang"));
-//                rowData.add(rs.getString("NgayLapHoaDon"));
-//                rowData.add(rs.getString("TongTien"));
-//                rowData.add(rs.getString("GhiChu"));
-//
-//               
-//                model.addRow(rowData);
-            }
-        
-
-        // Đặt model mới cho bảng để hiển thị dữ liệu
-        
-
-    } catch (SQLException ex) {
-        // Xử lý ngoại lệ trong trường hợp không thể kết nối hoặc thực hiện truy vấn
-        ex.printStackTrace();
-    }
-}
 
 
          
@@ -559,6 +547,9 @@ public void displayHoaDon(){
     private void ThemHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemHoaDonActionPerformed
        addHoaDonBan();
        displayHoaDon();
+      
+       
+      
     }//GEN-LAST:event_ThemHoaDonActionPerformed
 
     private void SuaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SuaHoaDonActionPerformed
@@ -577,9 +568,47 @@ public void displayHoaDon(){
         
     }//GEN-LAST:event_txtHoaDonHDActionPerformed
 
+    private void Showdulieu() {
+    
+    DefaultTableModel model = (DefaultTableModel)TableHoaDon.getModel();
+    Connection conn = new MyDBConnection().getConnection();
+        try{             
+        String query = "select MaHoaDon ,TenKhachHang,TenNhanVien,NgayLapHoaDon,TongTien,HoaDon.GhiChu\n" +
+"from HoaDon join NhanVien on HoaDon.MaNhanVien=NhanVien.MaNhanVien\n" +
+"join KhachHang on HoaDon.MaKhachHang = KhachHang.MaKhachHang " ;
+               
+           
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(query);      
+        
+          
+            while (rs.next()) {        
+                HoaDonBan gg = new HoaDonBan();
+                Object obj[]=new Object[10];
+              
+                obj[0]=TableHoaDon.getRowCount()+1;               
+                obj[1]=rs.getInt("MaHoaDon");
+                obj[2]=rs.getString("TenNhanVien");
+                obj[3]=rs.getString("TenKhachHang");
+                obj[4]=rs.getDate("NgayLapHoaDon");
+                obj[5]=rs.getString("TongTien");
+                obj[6]=rs.getString("GhiChu");
+                
+                model.addRow(obj); 
+                gg.setMaHoaDon(rs.getInt("MaHoaDon"));
+                gg.setNhanvien(rs.getString("TenNhanVien"));
+                gg.setKhachhang(rs.getString("TenKhachHang"));
+                gg.setNgayBan(rs.getString("NgayLapHoaDon"));
+                gg.setTongTien(rs.getDouble("TongTien"));
+                gg.setGhichu(rs.getString("GhiChu"));                
+                 Hoadon.add(gg);                                          
+            }
+    } catch (SQLException ex) {       
+        ex.printStackTrace();
+    }
+}
     private void TableHoaDonComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_TableHoaDonComponentShown
-
-            Showdulieu();  
+                
     }//GEN-LAST:event_TableHoaDonComponentShown
 
     private void txtNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNhanVienActionPerformed
@@ -592,6 +621,7 @@ public void displayHoaDon(){
 
     private void TableHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableHoaDonMouseClicked
         showDetail();
+      
     }//GEN-LAST:event_TableHoaDonMouseClicked
 
 
