@@ -8,12 +8,12 @@ package com.mycompany.qlbh.view;
  *
  * @author Dinh Giap
  */
-public class NhanVienPanel1 extends javax.swing.JPanel {
+public class NhanVienPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form NhanVienPanel
      */
-    public NhanVienPanel1() {
+    public NhanVienPanel() {
         initComponents();
     }
 
