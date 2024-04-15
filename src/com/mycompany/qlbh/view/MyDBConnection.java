@@ -16,14 +16,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 
-public class DBConnection {
+public class MyDBConnection {
     private static final String SERVER = "localhost";
     private static final String USER = "sa";
     private static final String PASSWORD = "123456";
     private static final String DB_NAME = "QuanLySanPham";
     private static final String PORT = "1433";
 
-    public static Connection getConnection() {
+    public Connection getConnection() {
         Connection conn = null;          
         try {
             SQLServerDataSource ds = new SQLServerDataSource();

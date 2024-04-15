@@ -13,7 +13,8 @@ public class KhachHang {
     private String TenKhachHang;
     private String DiaChi;
     private String SoDienThoai;
-
+    public KhachHang(){
+    }
     public KhachHang(int MaKhachHang, String TenKhachHang, String DiaChi, String SoDienThoai) {
         this.MaKhachHang = MaKhachHang;
         this.TenKhachHang = TenKhachHang;

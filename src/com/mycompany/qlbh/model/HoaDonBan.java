@@ -10,15 +10,15 @@ package com.mycompany.qlbh.model;
  */
 public class HoaDonBan {
     private int MaHoaDon;
-    private NhanVien nhanvien;
+    private String nhanvien;
     private String NgayBan;
-    private KhachHang khachhang;
+    private String khachhang;
     private double TongTien;
     private String Ghichu;
     public HoaDonBan() {
      
     }
-    public HoaDonBan(int MaHoaDon, NhanVien nhanvien, String NgayBan, KhachHang khachhang, double TongTien,String GhiChu) {
+    public HoaDonBan(int MaHoaDon, String nhanvien, String NgayBan, String khachhang, double TongTien,String GhiChu) {
         this.MaHoaDon = MaHoaDon;
         this.nhanvien = nhanvien;
         this.NgayBan = NgayBan;
@@ -43,11 +43,11 @@ public class HoaDonBan {
         this.MaHoaDon = MaHoaDon;
     }
 
-    public NhanVien getNhanvien() {
+    public String getNhanvien() {
         return nhanvien;
     }
 
-    public void setNhanvien(NhanVien nhanvien) {
+    public void setNhanvien(String nhanvien) {
         this.nhanvien = nhanvien;
     }
 
@@ -59,11 +59,11 @@ public class HoaDonBan {
         this.NgayBan = NgayBan;
     }
 
-    public KhachHang getKhachhang() {
+    public String getKhachhang() {
         return khachhang;
     }
 
-    public void setKhachhang(KhachHang khachhang) {
+    public void setKhachhang(String khachhang) {
         this.khachhang = khachhang;
     }
 
@@ -75,9 +75,7 @@ public class HoaDonBan {
         this.TongTien = TongTien;
     }
 
-    public void setNhanvien(String selectedValue) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    
     
     
 }
