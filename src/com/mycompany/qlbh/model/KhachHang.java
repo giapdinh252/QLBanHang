@@ -4,55 +4,94 @@
  */
 package com.mycompany.qlbh.model;
 
-/**
- *
- * @author Dinh Giap
- */
 public class KhachHang {
-    private int MaKhachHang;
-    private String TenKhachHang;
-    private String DiaChi;
-    private String SoDienThoai;
-    public KhachHang(){
-    }
-    public KhachHang(int MaKhachHang, String TenKhachHang, String DiaChi, String SoDienThoai) {
-        this.MaKhachHang = MaKhachHang;
-        this.TenKhachHang = TenKhachHang;
-        this.DiaChi = DiaChi;
-        this.SoDienThoai = SoDienThoai;
+    private int maKhachHang;
+    private String tenKhachHang;
+    private boolean gioiTinh; // true: Nam, false: Nữ
+    private String diaChi;
+    private String soDienThoai;
+    private String loaiKhachHang;
+    private String ghiChu;
+    private String chuThich;
+
+    public KhachHang(int maKhachHang, String tenKhachHang, boolean gioiTinh, String diaChi, String soDienThoai, String loaiKhachHang, String ghiChu, String chuThich) {
+        this.maKhachHang = maKhachHang;
+        this.tenKhachHang = tenKhachHang;
+        this.gioiTinh = gioiTinh;
+        this.diaChi = diaChi;
+        this.soDienThoai = soDienThoai;
+        this.loaiKhachHang = loaiKhachHang;
+        this.ghiChu = ghiChu;
+        this.chuThich = chuThich;
     }
 
+    public KhachHang() {
+        // Constructor mặc định
+    }
+
+    // Getters and Setters
     public int getMaKhachHang() {
-        return MaKhachHang;
+        return maKhachHang;
     }
 
-    public void setMaKhachHang(int MaKhachHang) {
-        this.MaKhachHang = MaKhachHang;
+    public void setMaKhachHang(int maKhachHang) {
+        this.maKhachHang = maKhachHang;
     }
 
     public String getTenKhachHang() {
-        return TenKhachHang;
+        return tenKhachHang;
     }
 
-    public void setTenKhachHang(String TenKhachHang) {
-        this.TenKhachHang = TenKhachHang;
+    public void setTenKhachHang(String tenKhachHang) {
+        this.tenKhachHang = tenKhachHang;
+    }
+
+    public boolean isGioiTinh() {
+        return gioiTinh;
+    }
+
+    public void setGioiTinh(boolean gioiTinh) {
+        this.gioiTinh = gioiTinh;
     }
 
     public String getDiaChi() {
-        return DiaChi;
+        return diaChi;
     }
 
-    public void setDiaChi(String DiaChi) {
-        this.DiaChi = DiaChi;
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
 
     public String getSoDienThoai() {
-        return SoDienThoai;
+        return soDienThoai;
     }
 
-    public void setSoDienThoai(String SoDienThoai) {
-        this.SoDienThoai = SoDienThoai;
+    public void setSoDienThoai(String soDienThoai) {
+        this.soDienThoai = soDienThoai;
     }
-    
-    
+
+    public String getLoaiKhachHang() {
+        return loaiKhachHang;
+    }
+
+    public void setLoaiKhachHang(String loaiKhachHang) {
+        this.loaiKhachHang = loaiKhachHang;
+    }
+
+    public String getGhiChu() {
+        return ghiChu;
+    }
+
+    public void setGhiChu(String ghiChu) {
+        this.ghiChu = ghiChu;
+    }
+
+    public String getChuThich() {
+        return chuThich;
+    }
+
+    public void setChuThich(String chuThich) {
+        this.chuThich = chuThich;
+    }
 }
+
