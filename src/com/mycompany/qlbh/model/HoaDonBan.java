@@ -70,7 +70,7 @@ public class HoaDonBan {
     public double getTongTien() {
         return TongTien;
     }
-
+ // test mot chut
     public void setTongTien(double TongTien) {
         this.TongTien = TongTien;
     }
