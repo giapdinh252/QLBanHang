@@ -74,8 +74,6 @@ public class HoaDonBan {
     public void setTongTien(double TongTien) {
         this.TongTien = TongTien;
     }
-
-    
-    
+// test 1 chut nua    
     
 }
