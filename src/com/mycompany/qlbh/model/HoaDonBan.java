@@ -75,7 +75,11 @@ public class HoaDonBan {
         this.TongTien = TongTien;
     }
 
+
     
     
+
+ 
+
     
 }
