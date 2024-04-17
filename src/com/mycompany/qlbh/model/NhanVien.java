@@ -6,10 +6,6 @@ package com.mycompany.qlbh.model;
 
 import java.util.Date;
 
-/**
- *
- * @author Dinh Giap
- */
 public class NhanVien {
     private int MaNhanVien;
     private String TenNhanVien;
@@ -17,16 +13,20 @@ public class NhanVien {
     private Date NgaySinh;
     private String SoDienThoai;
     private boolean GioiTinh;
-public NhanVien(){
-    
-}
-    public NhanVien(int MaNhanVien, String TenNhanVien, String DiaChi, Date NgaySinh, String SoDienThoai, boolean GioiTinh) {
+    private String ChucVu;
+
+    public NhanVien() {
+        
+    }
+
+    public NhanVien(int MaNhanVien, String TenNhanVien, String DiaChi, Date NgaySinh, String SoDienThoai, boolean GioiTinh, String ChucVu) {
         this.MaNhanVien = MaNhanVien;
         this.TenNhanVien = TenNhanVien;
         this.DiaChi = DiaChi;
         this.NgaySinh = NgaySinh;
         this.SoDienThoai = SoDienThoai;
         this.GioiTinh = GioiTinh;
+        this.ChucVu = ChucVu;
     }
 
     public int getMaNhanVien() {
@@ -53,6 +53,10 @@ public NhanVien(){
         return GioiTinh;
     }
 
+    public String getChucVu() {
+        return ChucVu;
+    }
+
     public void setMaNhanVien(int MaNhanVien) {
         this.MaNhanVien = MaNhanVien;
     }
@@ -76,6 +80,8 @@ public NhanVien(){
     public void setGioiTinh(boolean GioiTinh) {
         this.GioiTinh = GioiTinh;
     }
-   
-    
+
+    public void setChucVu(String ChucVu) {
+        this.ChucVu = ChucVu;
+    }
 }

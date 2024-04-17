@@ -42,6 +42,10 @@ public class HoaDonJPanel extends javax.swing.JPanel {
     Hoadon.add(hd);
   
 }
+     public void removeHoaDonBan(){
+      int i= TableHoaDon.getSelectedRow();
+      Hoadon.remove(i);
+  }
    
 public void displayHoaDon(){
     DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();   
@@ -69,9 +73,10 @@ public void showDetail(){
     public HoaDonJPanel() {
         initComponents();
        
-        Showdulieu();
+        ShowdulieuHoaDon();
         ThemNhanvien();
        ThemKhachHang();
+      
         
     }
     public void ThemNhanvien(){
@@ -244,6 +249,11 @@ try{
         });
 
         XoaHoaDon.setText("Xóa");
+        XoaHoaDon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                XoaHoaDonActionPerformed(evt);
+            }
+        });
 
         ResetHoaDon.setText("Reset");
         ResetHoaDon.addActionListener(new java.awt.event.ActionListener() {
@@ -568,20 +578,16 @@ try{
         
     }//GEN-LAST:event_txtHoaDonHDActionPerformed
 
-    private void Showdulieu() {
+    private void ShowdulieuHoaDon() {
     
     DefaultTableModel model = (DefaultTableModel)TableHoaDon.getModel();
     Connection conn = new MyDBConnection().getConnection();
         try{             
         String query = "select MaHoaDon ,TenKhachHang,TenNhanVien,NgayLapHoaDon,TongTien,HoaDon.GhiChu\n" +
 "from HoaDon join NhanVien on HoaDon.MaNhanVien=NhanVien.MaNhanVien\n" +
-"join KhachHang on HoaDon.MaKhachHang = KhachHang.MaKhachHang " ;
-               
-           
+"join KhachHang on HoaDon.MaKhachHang = KhachHang.MaKhachHang " ;                         
          Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery(query);      
-        
-          
+         ResultSet rs = stmt.executeQuery(query);                       
             while (rs.next()) {        
                 HoaDonBan gg = new HoaDonBan();
                 Object obj[]=new Object[10];
@@ -603,6 +609,7 @@ try{
                 gg.setGhichu(rs.getString("GhiChu"));                
                  Hoadon.add(gg);                                          
             }
+            rs.close();
     } catch (SQLException ex) {       
         ex.printStackTrace();
     }
@@ -623,6 +630,12 @@ try{
         showDetail();
       
     }//GEN-LAST:event_TableHoaDonMouseClicked
+
+    private void XoaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaHoaDonActionPerformed
+        
+        
+        
+    }//GEN-LAST:event_XoaHoaDonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -672,4 +685,6 @@ try{
     private javax.swing.JTextField txtTongTienCTHD;
     private javax.swing.JTextField txtTongTienHD;
     // End of variables declaration//GEN-END:variables
+
+   
 }

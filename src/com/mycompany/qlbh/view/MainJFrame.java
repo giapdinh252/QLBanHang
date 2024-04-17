@@ -27,7 +27,7 @@ public class MainJFrame extends javax.swing.JFrame {
         listDanhMuc.add(new DanhMucBean("HoaDon", jpnHoaDon, jlbHoaDon));
         listDanhMuc.add(new DanhMucBean("SanPham", jpnSanPham, jlbSanPham));
         listDanhMuc.add(new DanhMucBean("KhachHang", jpnKhachHang, jlbKhachHang));
-
+        listDanhMuc.add(new DanhMucBean("NhanVien",jpnNhanVien,jlbNhanVien));
         ChuyenManHinhController controller = new ChuyenManHinhController(jpnView);
         controller.setDashboard(jpnTrangChu, jlbTrangChu);
         controller.setEvent(listDanhMuc);

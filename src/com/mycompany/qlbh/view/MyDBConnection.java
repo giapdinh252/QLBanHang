@@ -32,10 +32,10 @@ public class MyDBConnection {
             ds.setServerName(SERVER);
             ds.setDatabaseName(DB_NAME);
             ds.setTrustServerCertificate(true);
-            ds.setPortNumber(Integer.parseInt(PORT));
-            
+            ds.setPortNumber(Integer.parseInt(PORT));           
             conn = ds.getConnection();
             System.out.println("Kết nối đến cơ sở dữ liệu thành công!");
+            
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
