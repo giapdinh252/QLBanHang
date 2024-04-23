@@ -9,12 +9,19 @@ import com.mycompany.qlbh.model.HoaDonBan;
 import com.mycompany.qlbh.model.KhachHang;
 import com.mycompany.qlbh.model.NhanVien;
 import com.mycompany.qlbh.view.MyDBConnection;
+import static java.lang.Double.parseDouble;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -31,21 +38,95 @@ public class HoaDonJPanel extends javax.swing.JPanel {
      * Creates new form HoaDonJPanel
      */
     
-    public void addHoaDonBan(){                   
+    public void addHoaDonBan(){ 
+        LocalDate today = LocalDate.now();
+
+        // Định dạng của ngày
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // Chuyển đổi ngày thành chuỗi theo định dạng mong muốn
+        String formattedDate = today.format(formatter);
+        Random random = new Random();
+Set<Integer> existingValues = new HashSet<>();
+int MaHD;
+do {  
+    MaHD = random.nextInt(99999) + 10000;
+} while (!existingValues.add(MaHD)); 
+
+   txtHoaDonHD.setText(String.valueOf(MaHD));
     HoaDonBan hd = new HoaDonBan();
-    hd.setNgayBan(txtNgayLap.getText());
-    hd.setMaHoaDon(Integer.parseInt(txtHoaDonHD.getText()));
-    hd.setNhanvien(txtNhanVien.getSelectedItem().toString());
-    hd.setKhachhang(txtKhachHang.getSelectedItem().toString());
-    hd.setTongTien(Double.parseDouble(txtTongTienHD.getText()));
-    hd.setGhichu(GhiChuHoaDon.getText());
+    String NgayLap= formattedDate;
+    
+String NhanVien = txtNhanVien.getSelectedItem().toString();
+String KhachHang = txtKhachHang.getSelectedItem().toString();
+
+    double TongTien=parseDouble(txtTongTienHD.getText());
+    String Ghichu=GhiChuHoaDon.getText();
+    hd.setNgayBan(NgayLap);
+ 
+    hd.setMaHoaDon(MaHD);
+    hd.setNhanvien(NhanVien);
+    hd.setKhachhang(KhachHang);
+    hd.setTongTien(TongTien);
+    hd.setGhichu(Ghichu);
     Hoadon.add(hd);
-  
+    
+ Connection conn = new MyDBConnection().getConnection();
+try {             
+    Statement stmt = conn.createStatement();
+    
+
+   String maKhachHangQuery = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = N'" + KhachHang + "'";
+
+    ResultSet rsKhachHang = stmt.executeQuery(maKhachHangQuery);
+    
+    if (rsKhachHang.next()) {
+        int maKhachHang = rsKhachHang.getInt("MaKhachHang");
+
+        
+        String maNhanVienQuery = "SELECT MaNhanVien FROM NhanVien WHERE TenNhanVien = N'" + NhanVien + "'";
+        ResultSet rsNhanVien = stmt.executeQuery(maNhanVienQuery);
+        
+        if (rsNhanVien.next()) {
+            int maNhanVien = rsNhanVien.getInt("MaNhanVien");
+
+           
+            String queryNV = "INSERT INTO HoaDon (MaHoaDon, MaKhachHang, MaNhanVien, NgayLapHoaDon, TongTien, GhiChu) " +
+                             "VALUES (" + MaHD + ", " + maKhachHang + ", " + maNhanVien + ", '" + NgayLap + "', " + 
+                             TongTien + ", '" + Ghichu + "')";
+
+            int rowsInserted = stmt.executeUpdate(queryNV);
+            if (rowsInserted > 0) {
+                System.out.println("Dữ liệu đã được chèn thành công!");
+            } else {
+                System.out.println("Không thể chèn dữ liệu vào bảng HoaDon!");
+            }
+        } else {
+            System.out.println("Không tìm thấy Mã Nhân Viên cho tên: " + NhanVien);
+        }
+    } else {
+        System.out.println("Không tìm thấy Mã Khách Hàng cho tên: " + KhachHang);
+    }
+} catch (SQLException ex) {
+    ex.printStackTrace();
 }
-     public void removeHoaDonBan(){
-      int i= TableHoaDon.getSelectedRow();
-      Hoadon.remove(i);
-  }
+    }
+
+    public void removeHoaDonBan(){
+    int selectedRow = TableHoaDon.getSelectedRow();
+    if (selectedRow != -1) { 
+        Hoadon.remove(selectedRow); 
+        ((DefaultTableModel) TableHoaDon.getModel()).removeRow(selectedRow); 
+    }
+}
+    public void updateSTTColumnHoaDon() {
+    DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();
+    for (int i = 0; i < model.getRowCount(); i++) {
+        model.setValueAt(i + 1, i, 0); 
+    }
+}
+
+
    
 public void displayHoaDon(){
     DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();   
@@ -58,6 +139,7 @@ public void displayHoaDon(){
         model.addRow(oj);
     }
 }
+
 public void showDetail(){
         int i= TableHoaDon.getSelectedRow();            
         HoaDonBan hd=Hoadon.get(i);
@@ -214,6 +296,14 @@ try{
                 .addContainerGap())
         );
 
+        jPanel1.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                jPanel1InputMethodTextChanged(evt);
+            }
+        });
+
         jLabel2.setText("Mã Hóa Đơn");
 
         jLabel3.setText("Nhân Viên");
@@ -229,6 +319,13 @@ try{
                 txtHoaDonHDMouseClicked(evt);
             }
         });
+        txtHoaDonHD.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                txtHoaDonHDInputMethodTextChanged(evt);
+            }
+        });
         txtHoaDonHD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtHoaDonHDActionPerformed(evt);
@@ -238,6 +335,12 @@ try{
         txtNhanVien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNhanVienActionPerformed(evt);
+            }
+        });
+
+        txtNgayLap.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtNgayLapMouseClicked(evt);
             }
         });
 
@@ -623,7 +726,7 @@ try{
     }//GEN-LAST:event_txtNhanVienActionPerformed
 
     private void txtHoaDonHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtHoaDonHDMouseClicked
-       
+       txtHoaDonHD.setEditable(false);
     }//GEN-LAST:event_txtHoaDonHDMouseClicked
 
     private void TableHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableHoaDonMouseClicked
@@ -632,10 +735,23 @@ try{
     }//GEN-LAST:event_TableHoaDonMouseClicked
 
     private void XoaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaHoaDonActionPerformed
-        
-        
+    
+        removeHoaDonBan();
+        updateSTTColumnHoaDon();
         
     }//GEN-LAST:event_XoaHoaDonActionPerformed
+
+    private void jPanel1InputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jPanel1InputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPanel1InputMethodTextChanged
+
+    private void txtNgayLapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtNgayLapMouseClicked
+      txtNgayLap.setEditable(false);
+    }//GEN-LAST:event_txtNgayLapMouseClicked
+
+    private void txtHoaDonHDInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_txtHoaDonHDInputMethodTextChanged
+        
+    }//GEN-LAST:event_txtHoaDonHDInputMethodTextChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
