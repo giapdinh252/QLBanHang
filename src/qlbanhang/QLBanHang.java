@@ -2,7 +2,6 @@ package qlbanhang;
 
 import com.mycompany.qlbh.view.MainJFrame;
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import com.mycompany.qlbh.view.DBConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;

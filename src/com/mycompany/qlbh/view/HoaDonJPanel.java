@@ -26,6 +26,8 @@ import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -37,34 +39,55 @@ public class HoaDonJPanel extends javax.swing.JPanel {
     /**
      * Creates new form HoaDonJPanel
      */
-    
+   public void ErrorMessage(){
+    try {
+       JTextField tien = txtTongTienHD ; 
+      
+       if (tien.getText().isEmpty()) {
+           JOptionPane.showMessageDialog(null, "Vui lòng nhập Tổng Tiền !", "Error", JOptionPane.ERROR_MESSAGE);
+       }else {
+           double value = Double.parseDouble(tien.getText());
+           if(Double.isNaN(value)){
+               JOptionPane.showMessageDialog(null, "Tổng tiền phải là số !", "Error" , JOptionPane.ERROR_MESSAGE);        
+           } else{               
+               JOptionPane.showMessageDialog(null, "Thêm dữ liệu hóa đơn thành công !", "Success",JOptionPane.INFORMATION_MESSAGE);
+           }                 
+       }
+       
+    } catch ( NumberFormatException e) {
+          JOptionPane.showMessageDialog(null, "Tổng tiền phải là số !", "Error" , JOptionPane.ERROR_MESSAGE);
+    }catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "Vui lòng nhập Tổng Tiền !", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
     public void addHoaDonBan(){ 
-        LocalDate today = LocalDate.now();
-
-        // Định dạng của ngày
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        // Chuyển đổi ngày thành chuỗi theo định dạng mong muốn
-        String formattedDate = today.format(formatter);
-        Random random = new Random();
-Set<Integer> existingValues = new HashSet<>();
-int MaHD;
-do {  
-    MaHD = random.nextInt(99999) + 10000;
-} while (!existingValues.add(MaHD)); 
-
-   txtHoaDonHD.setText(String.valueOf(MaHD));
+//        LocalDate today = LocalDate.now();
+//
+//        // Định dạng của ngày
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//
+//        // Chuyển đổi ngày thành chuỗi theo định dạng mong muốn
+//        String formattedDate = today.format(formatter);
+//        Random random = new Random();
+//Set<Integer> existingValues = new HashSet<>();
+//int MaHD;
+//do {  
+//    MaHD = random.nextInt(99999) + 10000;
+//} while (!existingValues.add(MaHD)); 
+//
+//   txtHoaDonHD.setText(String.valueOf(MaHD));
     HoaDonBan hd = new HoaDonBan();
-    String NgayLap= formattedDate;
+//  String NgayLap= formattedDate;
     
-String NhanVien = txtNhanVien.getSelectedItem().toString();
-String KhachHang = txtKhachHang.getSelectedItem().toString();
+    String NhanVien = txtNhanVien.getSelectedItem().toString();
+    String KhachHang = txtKhachHang.getSelectedItem().toString();
 
     double TongTien=parseDouble(txtTongTienHD.getText());
     String Ghichu=GhiChuHoaDon.getText();
-    hd.setNgayBan(NgayLap);
+//    hd.setNgayBan(NgayLap);
  
-    hd.setMaHoaDon(MaHD);
+//    hd.setMaHoaDon(MaHD);
     hd.setNhanvien(NhanVien);
     hd.setKhachhang(KhachHang);
     hd.setTongTien(TongTien);
@@ -73,10 +96,8 @@ String KhachHang = txtKhachHang.getSelectedItem().toString();
     
  Connection conn = new MyDBConnection().getConnection();
 try {             
-    Statement stmt = conn.createStatement();
-    
-
-   String maKhachHangQuery = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = N'" + KhachHang + "'";
+    Statement stmt = conn.createStatement();    
+    String maKhachHangQuery = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = N'" + KhachHang + "'";
 
     ResultSet rsKhachHang = stmt.executeQuery(maKhachHangQuery);
     
@@ -91,9 +112,9 @@ try {
             int maNhanVien = rsNhanVien.getInt("MaNhanVien");
 
            
-            String queryNV = "INSERT INTO HoaDon (MaHoaDon, MaKhachHang, MaNhanVien, NgayLapHoaDon, TongTien, GhiChu) " +
-                             "VALUES (" + MaHD + ", " + maKhachHang + ", " + maNhanVien + ", '" + NgayLap + "', " + 
-                             TongTien + ", '" + Ghichu + "')";
+         String queryNV = "INSERT INTO HoaDon (MaKhachHang, MaNhanVien, TongTien, GhiChu) " +
+                 "VALUES (" + maKhachHang + ", " + maNhanVien + ", " + 
+                 TongTien + ", '" + Ghichu + "')";
 
             int rowsInserted = stmt.executeUpdate(queryNV);
             if (rowsInserted > 0) {
@@ -102,10 +123,10 @@ try {
                 System.out.println("Không thể chèn dữ liệu vào bảng HoaDon!");
             }
         } else {
-            System.out.println("Không tìm thấy Mã Nhân Viên cho tên: " + NhanVien);
+            System.out.println("Không tìm thấy Mã Nhân Viên : " + NhanVien);
         }
     } else {
-        System.out.println("Không tìm thấy Mã Khách Hàng cho tên: " + KhachHang);
+        System.out.println("Không tìm thấy Mã Khách Hàng : " + KhachHang);
     }
 } catch (SQLException ex) {
     ex.printStackTrace();
@@ -128,17 +149,17 @@ try {
 
 
    
-public void displayHoaDon(){
-    DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();   
-    int STT = model.getRowCount() + 1;
-    if (!Hoadon.isEmpty()) {
-        HoaDonBan hd = Hoadon.get(Hoadon.size() - 1); 
-        Object[] oj = new Object[]{
-            STT, hd.getMaHoaDon(), hd.getKhachhang(), hd.getNhanvien(), hd.getNgayBan(), hd.getTongTien(), hd.getGhichu()
-        };
-        model.addRow(oj);
-    }
-}
+//public void displayHoaDon(){
+//    DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();   
+//    int STT = model.getRowCount() + 1;
+//    if (!Hoadon.isEmpty()) {
+//        HoaDonBan hd = Hoadon.get(Hoadon.size() - 1); 
+//        Object[] oj = new Object[]{
+//            STT, hd.getMaHoaDon(), hd.getKhachhang(), hd.getNhanvien(), hd.getNgayBan(), hd.getTongTien(), hd.getGhichu()
+//        };
+//        model.addRow(oj);
+//    }
+//}
 
 public void showDetail(){
         int i= TableHoaDon.getSelectedRow();            
@@ -153,13 +174,10 @@ public void showDetail(){
     }
 
     public HoaDonJPanel() {
-        initComponents();
-       
+        initComponents();       
         ShowdulieuHoaDon();
         ThemNhanvien();
-       ThemKhachHang();
-      
-        
+        ThemKhachHang();       
     }
     public void ThemNhanvien(){
 
@@ -169,11 +187,9 @@ try{
          String queryNV = "SELECT * FROM NhanVien";
          ResultSet rsNV = stmt.executeQuery(queryNV);   
             while (rsNV.next()) {               
-                txtNhanVien.addItem(rsNV.getString("TenNhanVien"));
-               
+                txtNhanVien.addItem(rsNV.getString("TenNhanVien"));               
             }
-            
-            
+                      
     } catch (SQLException ex) {
        
         ex.printStackTrace();
@@ -184,8 +200,7 @@ try{
 try{             
          Statement stmt = conn.createStatement();        
           String queryKH = "SELECT * FROM KhachHang"; 
-         ResultSet rsKH = stmt.executeQuery(queryKH);   
-                         
+         ResultSet rsKH = stmt.executeQuery(queryKH);                           
              while (rsKH.next()) {               
                 txtKhachHang.addItem(rsKH.getString("TenKhachHang"));              
             }           
@@ -193,10 +208,7 @@ try{
        
         ex.printStackTrace();
     }
-    }
-   
-    
-
+    }      
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -658,9 +670,11 @@ try{
          
     
     private void ThemHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemHoaDonActionPerformed
-       addHoaDonBan();
-       displayHoaDon();
-      
+       ErrorMessage();
+        addHoaDonBan();
+//     displayHoaDon();
+       ShowdulieuHoaDon();
+       
        
       
     }//GEN-LAST:event_ThemHoaDonActionPerformed
@@ -681,24 +695,23 @@ try{
         
     }//GEN-LAST:event_txtHoaDonHDActionPerformed
 
-    private void ShowdulieuHoaDon() {
-    
+    private void ShowdulieuHoaDon() {    
     DefaultTableModel model = (DefaultTableModel)TableHoaDon.getModel();
     Connection conn = new MyDBConnection().getConnection();
+        model.setRowCount(0);
         try{             
         String query = "select MaHoaDon ,TenKhachHang,TenNhanVien,NgayLapHoaDon,TongTien,HoaDon.GhiChu\n" +
-"from HoaDon join NhanVien on HoaDon.MaNhanVien=NhanVien.MaNhanVien\n" +
-"join KhachHang on HoaDon.MaKhachHang = KhachHang.MaKhachHang " ;                         
+                        "from HoaDon join NhanVien on HoaDon.MaNhanVien=NhanVien.MaNhanVien\n" +
+                        "join KhachHang on HoaDon.MaKhachHang = KhachHang.MaKhachHang " ;                         
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(query);                       
             while (rs.next()) {        
                 HoaDonBan gg = new HoaDonBan();
-                Object obj[]=new Object[10];
-              
+                Object obj[]=new Object[10];              
                 obj[0]=TableHoaDon.getRowCount()+1;               
                 obj[1]=rs.getInt("MaHoaDon");
                 obj[2]=rs.getString("TenNhanVien");
-                obj[3]=rs.getString("TenKhachHang");
+                obj[3]=rs.getString("TenKhachHang"); 
                 obj[4]=rs.getDate("NgayLapHoaDon");
                 obj[5]=rs.getString("TongTien");
                 obj[6]=rs.getString("GhiChu");
