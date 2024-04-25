@@ -53,7 +53,7 @@ public class HoaDonJPanel extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(null, "Vui lòng nhập Tổng Tiền !", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
- public void ErrorMessageDelete() {
+public void ErrorMessageDelete() {
     try {
         JTextField tien = txtTongTienHD;
         JTextField MaHD = txtHoaDonHD;
@@ -62,9 +62,12 @@ public class HoaDonJPanel extends javax.swing.JPanel {
         } else {
             int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
-               
-                removeHoaDonBan();
-                JOptionPane.showMessageDialog(null, "Xóa dữ liệu hóa đơn thành công !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                if (!MaHD.getText().isEmpty()) { // Kiểm tra nếu MaHD không rỗng trước khi xử lý
+                    removeHoaDonBan();
+                    JOptionPane.showMessageDialog(null, "Xóa dữ liệu hóa đơn thành công !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn dữ liệu cần xóa !", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 
             }
@@ -131,14 +134,19 @@ try {
 }
     }
 //    --------------------------------------------------------------------------------------
-    public void removeCTHD(){//Xóa 
-        int maHoaDon = Integer.parseInt(txtHoaDonHD.getText());
+    public void removeCTHD(){
+        String txt =txtHoaDonHD.getText();  
+        if(txt.isEmpty()){
+            return;
+        }
+        int maHoaDon = Integer.parseInt(txt);
+       
     String querychitietHD = "DELETE FROM ChiTietHoaDon WHERE MaHoaDon = ?";
     Connection conn = new MyDBConnection().getConnection();
     try (PreparedStatement pstmt = conn.prepareStatement(querychitietHD)) {
     pstmt.setInt(1, maHoaDon);
     pstmt.executeUpdate();
-    conn.close();
+    
 } catch (SQLException ex) {
     ex.printStackTrace();
 }
@@ -175,7 +183,7 @@ try {
 
           
            String queryNV = "DELETE FROM HoaDon " +
-                 "WHERE MaKhachHang = " + maKhachHang +" AND MaHoaDon = " + mahoadon + " AND MaNhanVien = " + maNhanVien + " AND TongTien = " + TongTien + " AND GhiChu = '" + Ghichu + "'";
+                 "WHERE MaKhachHang = " + maKhachHang +" AND MaHoaDon = " + mahoadon + " AND MaNhanVien = " + maNhanVien + " AND TongTien = " + TongTien + " AND (GhiChu = '' OR GhiChu = '"+ Ghichu +"')";
         
             int rowsInserted = stmt.executeUpdate(queryNV);
            
@@ -190,7 +198,7 @@ try {
     } else {
         System.out.println("Không tìm thấy Mã Khách Hàng : " + KhachHang);
     }
-    conn.close();
+   
 } catch (SQLException ex) {
     ex.printStackTrace();
 }
@@ -796,7 +804,6 @@ try{
     private void XoaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaHoaDonActionPerformed
         removeCTHD();
         ErrorMessageDelete();
-    
         updateSTTColumnHoaDon();
         
     }//GEN-LAST:event_XoaHoaDonActionPerformed
