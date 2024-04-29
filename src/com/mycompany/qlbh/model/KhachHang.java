@@ -4,17 +4,20 @@
  */
 package com.mycompany.qlbh.model;
 
+import java.util.Date;
+
 public class KhachHang {
     private int maKhachHang;
     private String tenKhachHang;
-    private boolean gioiTinh; 
+    private boolean gioiTinh;
     private String diaChi;
     private String soDienThoai;
     private String loaiKhachHang;
     private String ghiChu;
     private String chuThich;
+    private Date ngaySinh; // Thêm trường ngày sinh kiểu Date
 
-    public KhachHang(int maKhachHang, String tenKhachHang, boolean gioiTinh, String diaChi, String soDienThoai, String loaiKhachHang, String ghiChu, String chuThich) {
+    public KhachHang(int maKhachHang, String tenKhachHang, boolean gioiTinh, String diaChi, String soDienThoai, String loaiKhachHang, String ghiChu, String chuThich, Date ngaySinh) {
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.gioiTinh = gioiTinh;
@@ -23,6 +26,7 @@ public class KhachHang {
         this.loaiKhachHang = loaiKhachHang;
         this.ghiChu = ghiChu;
         this.chuThich = chuThich;
+        this.ngaySinh = ngaySinh;
     }
 
     public KhachHang() {
@@ -93,5 +97,12 @@ public class KhachHang {
     public void setChuThich(String chuThich) {
         this.chuThich = chuThich;
     }
-}
 
+    public Date getNgaySinh() {
+        return ngaySinh;
+    }
+
+    public void setNgaySinh(Date ngaySinh) {
+        this.ngaySinh = ngaySinh;
+    }
+}
