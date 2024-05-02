@@ -14,12 +14,14 @@ public class NhanVien {
     private String SoDienThoai;
     private boolean GioiTinh;
     private String ChucVu;
+    private Date NgayVaoLam; // Thêm trường Ngày vào làm
+    private String GhiChu; // Thêm trường Ghi chú
 
     public NhanVien() {
         
     }
 
-    public NhanVien(int MaNhanVien, String TenNhanVien, String DiaChi, Date NgaySinh, String SoDienThoai, boolean GioiTinh, String ChucVu) {
+    public NhanVien(int MaNhanVien, String TenNhanVien, String DiaChi, Date NgaySinh, String SoDienThoai, boolean GioiTinh, String ChucVu, Date NgayVaoLam, String GhiChu) {
         this.MaNhanVien = MaNhanVien;
         this.TenNhanVien = TenNhanVien;
         this.DiaChi = DiaChi;
@@ -27,6 +29,8 @@ public class NhanVien {
         this.SoDienThoai = SoDienThoai;
         this.GioiTinh = GioiTinh;
         this.ChucVu = ChucVu;
+        this.NgayVaoLam = NgayVaoLam;
+        this.GhiChu = GhiChu;
     }
 
     public int getMaNhanVien() {
@@ -57,6 +61,14 @@ public class NhanVien {
         return ChucVu;
     }
 
+    public Date getNgayVaoLam() {
+        return NgayVaoLam;
+    }
+
+    public String getGhiChu() {
+        return GhiChu;
+    }
+
     public void setMaNhanVien(int MaNhanVien) {
         this.MaNhanVien = MaNhanVien;
     }
@@ -83,5 +95,13 @@ public class NhanVien {
 
     public void setChucVu(String ChucVu) {
         this.ChucVu = ChucVu;
+    }
+
+    public void setNgayVaoLam(Date NgayVaoLam) {
+        this.NgayVaoLam = NgayVaoLam;
+    }
+
+    public void setGhiChu(String GhiChu) {
+        this.GhiChu = GhiChu;
     }
 }
