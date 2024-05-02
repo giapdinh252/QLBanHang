@@ -3,12 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/model/NhanVien.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/NhanVienPanel.java</file>
-            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/KhachHangPanel.java</file>
-            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/MainJFrame.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/MyDBConnection.java</file>
-            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/qlbanhang/QLBanHang.java</file>
-            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/TrangChuJPanel1.java</file>
+            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/model/SanPham.java</file>
+            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/model/ChiTietHoaDon.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/model/HoaDonBan.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/SanPhamJPanel.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/HoaDonJPanel.java</file>

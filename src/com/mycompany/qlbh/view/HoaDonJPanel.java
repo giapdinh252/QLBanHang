@@ -5,6 +5,7 @@
 package com.mycompany.qlbh.view;
 
 import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import com.mycompany.qlbh.model.ChiTietHoaDon;
 import com.mycompany.qlbh.model.HoaDonBan;
 import com.mycompany.qlbh.model.KhachHang;
 import com.mycompany.qlbh.model.NhanVien;
@@ -17,7 +18,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+
 import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -28,10 +31,21 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HoaDonJPanel extends javax.swing.JPanel {   
     List<HoaDonBan> Hoadon = new ArrayList<>();
+    List<ChiTietHoaDon> chiTietHoaDons=new ArrayList<>();
     /**
      * Creates new form HoaDonJPanel
      */
 //    --------------------------------------------------------------------------------------
+    
+   public HoaDonJPanel() {
+        initComponents();       
+        ShowdulieuHoaDon();
+        ThemNhanvien();
+        ThemKhachHang(); 
+        ThemSP();
+       
+        
+    }
    public void ErrorMessage(){
     try {
        JTextField tien = txtTongTienHD ; 
@@ -62,7 +76,7 @@ public void ErrorMessageDelete() {
         } else {
             int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
-                if (!MaHD.getText().isEmpty()) { // Kiểm tra nếu MaHD không rỗng trước khi xử lý
+                if (!MaHD.getText().isEmpty()) { 
                     removeHoaDonBan();
                     JOptionPane.showMessageDialog(null, "Xóa dữ liệu hóa đơn thành công !", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -81,20 +95,13 @@ public void ErrorMessageDelete() {
 
 // -------------------------------------------------------------------------------   
     public void addHoaDonBan(){ 
-    HoaDonBan hd = new HoaDonBan();    
+        
     String NhanVien = txtNhanVien.getSelectedItem().toString();
     String KhachHang = txtKhachHang.getSelectedItem().toString();
 
     double TongTien=parseDouble(txtTongTienHD.getText());
     String Ghichu=GhiChuHoaDon.getText();
-
-    hd.setNhanvien(NhanVien);
-    hd.setKhachhang(KhachHang);
-    hd.setTongTien(TongTien);
-    hd.setGhichu(Ghichu);
-    Hoadon.add(hd);
-    
- Connection conn = new MyDBConnection().getConnection();
+    Connection conn = new MyDBConnection().getConnection();
 try {             
     Statement stmt = conn.createStatement();    
     String maKhachHangQuery = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = N'" + KhachHang + "'";
@@ -221,15 +228,10 @@ public void showDetail(){
         txtKhachHang.setSelectedItem(hd.getKhachhang());
         txtTongTienHD.setText(String.valueOf(hd.getTongTien()));
         txtNgayLap.setText(hd.getNgayBan());
-        
+        txtMaHoaDonCTHD.setText(String.valueOf(hd.getMaHoaDon()));
     }
 //    --------------------------------------------------------------------------------------
-    public HoaDonJPanel() {
-        initComponents();       
-        ShowdulieuHoaDon();
-        ThemNhanvien();
-        ThemKhachHang();       
-    }
+    
 //    --------------------------------------------------------------------------------------
     public void ThemNhanvien(){
 
@@ -282,28 +284,278 @@ try{
                 obj[3]=rs.getString("TenKhachHang"); 
                 obj[4]=rs.getDate("NgayLapHoaDon");
                 obj[5]=rs.getString("TongTien");
-                obj[6]=rs.getString("GhiChu");
-                
+                obj[6]=rs.getString("GhiChu");                 
                 model.addRow(obj); 
-                gg.setMaHoaDon(rs.getInt("MaHoaDon"));
+                 gg.setMaHoaDon(rs.getInt("MaHoaDon"));
                 gg.setNhanvien(rs.getString("TenNhanVien"));
                 gg.setKhachhang(rs.getString("TenKhachHang"));
                 gg.setNgayBan(rs.getString("NgayLapHoaDon"));
                 gg.setTongTien(rs.getDouble("TongTien"));
                 gg.setGhichu(rs.getString("GhiChu"));                
-                 Hoadon.add(gg);                                          
+                 Hoadon.add(gg);                                     
             }
             rs.close();
     } catch (SQLException ex) {       
         ex.printStackTrace();
     }
 }
+    public void suaHoaDon() {
+    DefaultTableModel model = (DefaultTableModel) TableHoaDon.getModel();
+   Connection conn = new MyDBConnection().getConnection();
+    int selectedRowIndex = TableHoaDon.getSelectedRow();
+    
+    if (selectedRowIndex == -1) {
+        JOptionPane.showMessageDialog(null, "Vui lòng chọn hóa đơn cần sửa.");
+        return;
+    }
+    String NhanVien = txtNhanVien.getSelectedItem().toString();
+    String KhachHang = txtKhachHang.getSelectedItem().toString();
+    
+    try {
+        
+        conn = new MyDBConnection().getConnection();
+      
+       Statement stmt = conn.createStatement();    
+    String maKhachHangQuery = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = N'" + KhachHang + "'";
+
+    ResultSet rsKhachHang = stmt.executeQuery(maKhachHangQuery);
+    
+    if (rsKhachHang.next()) {
+        int maKhachHang = rsKhachHang.getInt("MaKhachHang");
+
+        
+        String maNhanVienQuery = "SELECT MaNhanVien FROM NhanVien WHERE TenNhanVien = N'" + NhanVien + "'";
+        ResultSet rsNhanVien = stmt.executeQuery(maNhanVienQuery);
+        
+        if (rsNhanVien.next()) {
+            int maNhanVien = rsNhanVien.getInt("MaNhanVien");
+            String sql = "update HoaDon set MaKhachHang = ?, MaNhanVien = ?, NgayLapHoaDon = ?, TongTien = ?, GhiChu = ? where MaHoaDon = ?";
+        PreparedStatement st = conn.prepareStatement(sql);
+        st.setInt(1,  maKhachHang);
+        st.setInt(2, maNhanVien);
+        st.setString(3, txtNgayLap.getText());
+        st.setDouble(4, parseDouble(txtTongTienHD.getText()));
+        st.setString(5, GhiChuHoaDon.getText());
+        st.setInt(6, Integer.parseInt(model.getValueAt(selectedRowIndex, 1).toString())); // Assuming MaHoaDon is in the first column
+       
+        int rowsUpdated = st.executeUpdate();
+        if (rowsUpdated > 0) {
+            JOptionPane.showMessageDialog(null, "Update dữ liệu thành công", "Succes", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Không có hóa đơn nào được cập nhật", "Warning", JOptionPane.WARNING_MESSAGE);
+        } 
+        }
+       
+    }
+      
+        
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật dữ liệu: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } finally {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi đóng kết nối: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+}
+//    --------------------------------------------------------------
+    public void reset(){
+        txtHoaDonHD.setText("");      
+        txtNgayLap.setText("");
+        txtTongTienHD.setText("");
+        GhiChuHoaDon.setText("");
+    }
+//-------------------------------------------Chi Tiết Hóa Đơn---------------------------------------------------------------------
+public void TinhTienSP() {
+    int SoLuong = 0;
+    double Tien = 0;
+    String soLuongText = txtSoLuong.getText();
+        SoLuong = Integer.parseInt(soLuongText);
+            
+    double Gia = GetGiaSanPham();
+    Tien = Gia * SoLuong;
+    txtTongTienCTHD.setText(String.valueOf(Tien));
+}
+public void batLoiSL(){
+    int SoLuong = 0;
+    String soLuongText = txtSoLuong.getText();
+if (!soLuongText.isEmpty()) {
+    try {
+        SoLuong = Integer.parseInt(soLuongText);
+        if (SoLuong <= 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(null, "Số lượng phải là một số nguyên.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+} else {
+    JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    return; 
+}
+
+}
+
+public double GetGiaSanPham() {
+    String TenSP = jcbSanPham.getSelectedItem().toString();
+    
+    double Gia=0;
+
+    try (Connection conn = new MyDBConnection().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement("SELECT GiaBan FROM SanPham WHERE TenSanPham = ?")) {
+        pstmt.setString(1, TenSP);
+        ResultSet rsSP = pstmt.executeQuery();
+        if (rsSP.next()) {
+            Gia = rsSP.getDouble("GiaBan");
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }    
+    
+    return Gia;
+}
+public int MaSanPham(){
+    String TenSP = jcbSanPham.getSelectedItem().toString();
+    int MaSP=0;
+    try (Connection conn = new MyDBConnection().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement("SELECT MaSanPham FROM SanPham WHERE TenSanPham = ?")) {
+        pstmt.setString(1, TenSP);
+        ResultSet rsSP = pstmt.executeQuery();
+        if (rsSP.next()) {
+            MaSP = rsSP.getInt("MaSanPham");
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }    
+    return MaSP;
+}
+
+    public void ShowdulieuCTHD() {    
+    DefaultTableModel model = (DefaultTableModel)TableCTHD.getModel();
+    Connection conn = new MyDBConnection().getConnection();
+    model.setRowCount(0);
+    String maHoaDonText = txtHoaDonHD.getText();
+    if (maHoaDonText.isEmpty()) {   
+    return;
+}
+int MaHoaDon = Integer.parseInt(maHoaDonText);
+
+         System.out.println(MaHoaDon);   
+        try{             
+String query = "SELECT MaCTHD, ChiTietHoaDon.MaHoaDon, MaSanPham, SoLuong, ChiTietHoaDon.TongTien, ChiTietHoaDon.GhiChu " +
+               "FROM ChiTietHoaDon " +
+               "JOIN HoaDon ON ChiTietHoaDon.MaHoaDon = HoaDon.MaHoaDon " +
+               "WHERE ChiTietHoaDon.MaHoaDon = " + MaHoaDon;
+                                                             
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(query);                       
+            while (rs.next()) {        
+                ChiTietHoaDon cthd =new  ChiTietHoaDon();
+                Object obj[]=new Object[10];              
+                obj[0]=TableCTHD.getRowCount()+1;               
+                obj[1]=rs.getInt("MaCTHD");
+                obj[2]=rs.getInt("MaHoaDon");
+                obj[3]=rs.getInt("MaSanPham"); 
+                obj[4] = rs.getInt("SoLuong");
+                obj[5]=rs.getDouble("TongTien");
+                obj[6]=rs.getString("GhiChu"); 
+                model.addRow(obj); 
+                cthd.setMaCTHD(rs.getInt("MaCTHD"));
+                cthd.setMaHoaDon(rs.getInt("MaHoaDon"));
+                cthd.setMaSanPham(rs.getInt("MaSanPham"));
+                cthd.setSoLuong(rs.getInt("SoLuong"));
+                cthd.setTongTien(rs.getDouble("TongTien"));
+                cthd.setGhiChu(rs.getString("GhiChu"));
+                chiTietHoaDons.add(cthd);
+            }
+            rs.close();
+    } catch (SQLException ex) {       
+        ex.printStackTrace();
+    }
+}
+public void showDetailCTHD() {
+    int selectedIndex = TableCTHD.getSelectedRow();
+    if (selectedIndex == -1) {
+        return;
+    }   
+    ChiTietHoaDon CTHD = chiTietHoaDons.get(selectedIndex);
+    int maSanPham = CTHD.getMaSanPham();
+    System.out.println(maSanPham);
+    try (Connection conn = new MyDBConnection().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement("SELECT TenSanPham FROM SanPham WHERE MaSanPham = ?")) {                
+        pstmt.setInt(1, maSanPham);
+        ResultSet rsSP = pstmt.executeQuery();
+        if (rsSP.next()) {
+            String tenSanPham = rsSP.getString("TenSanPham");
+            jcbSanPham.setSelectedItem(tenSanPham);
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }
+    
+    txtMaCTHD.setText(String.valueOf(CTHD.getMaCTHD()));     
+    GhiChuCTHD.setText(CTHD.getGhiChu());
+    txtSoLuong.setText(String.valueOf(CTHD.getSoLuong()));        
+    txtTongTienCTHD.setText(String.valueOf(CTHD.getTongTien()));       
+}
+
+
+     public void ThemSP(){
+         Connection conn = new MyDBConnection().getConnection();
+try{             
+         Statement stmt = conn.createStatement();
+         String queryNV = "SELECT * FROM SanPham";
+         ResultSet rsNV = stmt.executeQuery(queryNV); 
+         jcbSanPham.removeAllItems();
+            while (rsNV.next()) {               
+                jcbSanPham.addItem(rsNV.getString("TenSanPham"));               
+            }
+                      
+    } catch (SQLException ex) {
+       
+        ex.printStackTrace();
+    }
+     }
+     public void addCTHD(){             
+    int MaHoaDon=Integer.parseInt(txtHoaDonHD.getText());
+    double TongTien=parseDouble(txtTongTienCTHD.getText());
+    int SoLuong=Integer.parseInt(txtSoLuong.getText());
+    int MaSanPham=MaSanPham();
+    String Ghichu=GhiChuCTHD.getText();
+    Connection conn = new MyDBConnection().getConnection();
+    if(SoLuong>0){
+        try {             
+    Statement stmt = conn.createStatement();              
+         String queryNV = "INSERT INTO ChiTietHoaDon ( MaHoaDon,MaSanPham,SoLuong, TongTien, ChiTietHoaDon.GhiChu) " +
+                 "VALUES ( " + MaHoaDon + ", " + MaSanPham +","+ SoLuong+","+
+                 TongTien + ", '" + Ghichu + "')";
+
+            int rowsInserted = stmt.executeUpdate(queryNV);
+            if (rowsInserted > 0) {
+                System.out.println("Dữ liệu đã được chèn thành công!");
+                JOptionPane.showMessageDialog(null, "Thêm dữ liệu thành công", "Succes", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                System.out.println("Không thể chèn dữ liệu vào bảng Chi tiet hoa don !");
+            }
+            
+    conn.close();
+} catch (SQLException ex) {
+    ex.printStackTrace();
+}
+    }
+
+    }
+     
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -350,7 +602,7 @@ try{
         jButton8 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        GhiChuCTHD = new javax.swing.JTextArea();
         txtMaHoaDonCTHD = new javax.swing.JTextField();
 
         jLabel15.setText("Hóa Đơn Bán");
@@ -579,15 +831,12 @@ try{
 
             },
             new String [] {
-                "STT", "Mã CTHD", "Mã Hóa Đơn", "Sản Phẩm", "Số Lượng", "Tổng Tiền", "Ghi Chú"
+                "STT", "Mã CTHD", "Mã Hóa Đơn", "Mã Sản Phẩm", "Số Lượng", "Tổng Tiền", "Ghi Chú"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+        ));
+        TableCTHD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableCTHDMouseClicked(evt);
             }
         });
         jScrollPane4.setViewportView(TableCTHD);
@@ -605,6 +854,36 @@ try{
         jLabel12.setText("Tổng Tiền");
 
         jcbSanPham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jcbSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jcbSanPhamMouseClicked(evt);
+            }
+        });
+
+        txtSoLuong.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtSoLuongMouseClicked(evt);
+            }
+        });
+        txtSoLuong.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSoLuongActionPerformed(evt);
+            }
+        });
+        txtSoLuong.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSoLuongKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSoLuongKeyReleased(evt);
+            }
+        });
+
+        txtTongTienCTHD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTongTienCTHDActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Sửa");
 
@@ -622,9 +901,15 @@ try{
 
         jLabel13.setText("Ghi Chú");
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        GhiChuCTHD.setColumns(20);
+        GhiChuCTHD.setRows(5);
+        jScrollPane2.setViewportView(GhiChuCTHD);
+
+        txtMaHoaDonCTHD.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaHoaDonCTHDActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -760,7 +1045,7 @@ try{
     
     private void ThemHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemHoaDonActionPerformed
        ErrorMessage();
-        addHoaDonBan();
+       addHoaDonBan();
        ShowdulieuHoaDon();
        
        
@@ -768,21 +1053,25 @@ try{
     }//GEN-LAST:event_ThemHoaDonActionPerformed
 
     private void SuaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SuaHoaDonActionPerformed
-        // TODO add your handling code here:
+        suaHoaDon();
+        ShowdulieuHoaDon();
     }//GEN-LAST:event_SuaHoaDonActionPerformed
 
     private void ResetHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetHoaDonActionPerformed
-        // TODO add your handling code here:
+      reset();
     }//GEN-LAST:event_ResetHoaDonActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
+        batLoiSL();
+        addCTHD();
+        ShowdulieuCTHD();
+      
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void txtHoaDonHDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtHoaDonHDActionPerformed
         
     }//GEN-LAST:event_txtHoaDonHDActionPerformed
-//    --------------------------------------------------------------------------------------
+
    
     private void TableHoaDonComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_TableHoaDonComponentShown
                 
@@ -797,8 +1086,8 @@ try{
     }//GEN-LAST:event_txtHoaDonHDMouseClicked
 
     private void TableHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableHoaDonMouseClicked
-        showDetail();
-      
+    showDetail();
+    ShowdulieuCTHD();
     }//GEN-LAST:event_TableHoaDonMouseClicked
 
     private void XoaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaHoaDonActionPerformed
@@ -820,8 +1109,41 @@ try{
         
     }//GEN-LAST:event_txtHoaDonHDInputMethodTextChanged
 
+    private void txtMaHoaDonCTHDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaHoaDonCTHDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMaHoaDonCTHDActionPerformed
+
+    private void txtTongTienCTHDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTongTienCTHDActionPerformed
+        
+    }//GEN-LAST:event_txtTongTienCTHDActionPerformed
+
+    private void txtSoLuongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSoLuongActionPerformed
+       
+    }//GEN-LAST:event_txtSoLuongActionPerformed
+
+    private void txtSoLuongMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtSoLuongMouseClicked
+       
+    }//GEN-LAST:event_txtSoLuongMouseClicked
+
+    private void txtSoLuongKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSoLuongKeyPressed
+      
+    }//GEN-LAST:event_txtSoLuongKeyPressed
+
+    private void txtSoLuongKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSoLuongKeyReleased
+      TinhTienSP();
+    }//GEN-LAST:event_txtSoLuongKeyReleased
+
+    private void jcbSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jcbSanPhamMouseClicked
+        TinhTienSP();
+    }//GEN-LAST:event_jcbSanPhamMouseClicked
+
+    private void TableCTHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableCTHDMouseClicked
+        showDetailCTHD();
+    }//GEN-LAST:event_TableCTHDMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea GhiChuCTHD;
     private javax.swing.JTextArea GhiChuHoaDon;
     private javax.swing.JButton ResetHoaDon;
     private javax.swing.JButton SuaHoaDon;
@@ -856,7 +1178,6 @@ try{
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JComboBox<String> jcbSanPham;
     private javax.swing.JTextField txtHoaDonHD;
     private javax.swing.JComboBox<String> txtKhachHang;
