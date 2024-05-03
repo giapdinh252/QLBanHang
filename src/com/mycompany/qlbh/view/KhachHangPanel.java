@@ -17,6 +17,8 @@ import java.sql.PreparedStatement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -31,14 +33,13 @@ public class KhachHangPanel extends javax.swing.JPanel {
      */
 
 public void addKhachHang() {
-     if (txtma.getText().isEmpty() || txtten.getText().isEmpty() || txtdiachi.getText().isEmpty() || 
+    if (txtten.getText().isEmpty() || txtdiachi.getText().isEmpty() || 
         txtsdt.getText().isEmpty() || txtngaysinh.getText().isEmpty() || cbxloai.getSelectedIndex() == -1) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
         return; // Không thực hiện thêm khách hàng nếu có trường nhập liệu còn trống
     }
     KhachHang s = new KhachHang();
     
-    int maKhachHang = Integer.parseInt(txtma.getText());
     String tenKhachHang = txtten.getText();
     boolean gioiTinh = rdtnNam.isSelected(); // Kiểm tra nút radio cho giới tính Nam
     String diaChi = txtdiachi.getText();
@@ -58,7 +59,6 @@ public void addKhachHang() {
         return; // Thoát khỏi phương thức nếu ngày sinh không hợp lệ
     }
 
-    s.setMaKhachHang(maKhachHang);
     s.setTenKhachHang(tenKhachHang);
     s.setGioiTinh(gioiTinh); // Đặt giá trị cho gioiTinh
     s.setDiaChi(diaChi);
@@ -98,7 +98,7 @@ public void addKhachHang() {
         
         // Clear input fields after adding data
         clearInputFields();
-        
+        displayKhachHang();
     } catch (SQLException ex) {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(this, "Lỗi khi thêm khách hàng");
@@ -111,7 +111,7 @@ public void addKhachHang() {
             ex.printStackTrace();
         }
     }
-    displayKhachHang();
+    
 }
 
 private void clearInputFields() {
@@ -180,7 +180,8 @@ public void displayKhachHang() {
         };
         model.addRow(rowData); // Thêm dòng mới vào bảng
     }
-}
+} 
+
 public void removeKhachHang() {
     int selectedRow = TableKhachHang.getSelectedRow();
     if (selectedRow != -1) {
@@ -261,10 +262,10 @@ public void updateKhachHang() {
 
 public void reset() {
     // Đặt lại giá trị của các thành phần nhập liệu
-    txtma.setText("");
-    txtten.setText("");
+    txtma.setText("1");
+    txtten.setText("Phúc");
     txtdiachi.setText("");
-    txtsdt.setText("");
+    txtsdt.setText("0367348026");
     txtghichu.setText("");
     
     // Đặt lại giá trị của các radio button
@@ -279,7 +280,7 @@ public void reset() {
     model.setRowCount(0);
 }
 
-    public KhachHangPanel() {
+  public KhachHangPanel() {
         initComponents();
         buttonGroup2.add(rdtnNam);
         buttonGroup2.add(rdtnNu);
@@ -291,25 +292,29 @@ public void reset() {
             cbxloai.addItem(loai);
         }
         ShowdulieuKhachHang();
-    }
+    } 
+
   private void ShowdulieuKhachHang() {
     DefaultTableModel model = (DefaultTableModel) TableKhachHang.getModel();
     Connection conn = new MyDBConnection().getConnection();
     try {
-        String queryKH = "SELECT * FROM KhachHang";
+        String queryKH = "SELECT KhachHang.MaKhachHang, KhachHang.TenKhachHang, KhachHang.GioiTinh, " +
+                         "KhachHang.DiaChi, KhachHang.SDT, LoaiKhachHang.TenLoaiKhachHang, " +
+                         "KhachHang.GhiChu, KhachHang.NgaySinh " +
+                         "FROM KhachHang INNER JOIN LoaiKhachHang " +
+                         "ON KhachHang.LoaiKhachHang = LoaiKhachHang.MaLoaiKhachHang";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(queryKH);
         while (rs.next()) {
-            KhachHang kh = new KhachHang();
             Object objKH[] = new Object[11]; // Thêm một cột mới cho ngày sinh
-            objKH[0] = TableKhachHang.getRowCount() + 1;
+            objKH[0] = model.getRowCount() + 1;
             objKH[1] = rs.getInt("MaKhachHang");
             objKH[2] = rs.getString("TenKhachHang");
             int gioiTinh = rs.getInt("GioiTinh");
             objKH[3] = (gioiTinh == 1) ? "Nam" : "Nữ"; // Chuyển đổi giới tính từ số sang chuỗi "Nam" hoặc "Nữ"
             objKH[4] = rs.getString("DiaChi");
             objKH[5] = rs.getString("SDT");
-            objKH[6] = rs.getString("LoaiKhachHang");
+            objKH[6] = rs.getString("TenLoaiKhachHang");
             objKH[7] = rs.getString("GhiChu");
             // Lấy ngày sinh từ ResultSet và chuyển đổi sang định dạng String
             Date ngaySinh = rs.getDate("NgaySinh");
@@ -323,6 +328,7 @@ public void reset() {
         ex.printStackTrace();
     }
 }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -375,10 +381,20 @@ public void reset() {
             public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
             }
         });
+        TableKhachHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableKhachHangMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(TableKhachHang);
 
         jLabel1.setText("Mã KH");
 
+        txtma.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtmaMouseClicked(evt);
+            }
+        });
         txtma.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtmaActionPerformed(evt);
@@ -398,6 +414,11 @@ public void reset() {
         jLabel7.setText("Ghi chú");
 
         ThemKhachHang.setText("Thêm");
+        ThemKhachHang.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ThemKhachHangMouseClicked(evt);
+            }
+        });
         ThemKhachHang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ThemKhachHangActionPerformed(evt);
@@ -588,6 +609,57 @@ public void reset() {
     private void TableKhachHangAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_TableKhachHangAncestorAdded
         // TODO add your handling code here:
     }//GEN-LAST:event_TableKhachHangAncestorAdded
+
+    private void txtmaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtmaMouseClicked
+        // TODO add your handling code here:
+        txtma.setEditable(false);
+    }//GEN-LAST:event_txtmaMouseClicked
+
+    private void TableKhachHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableKhachHangMouseClicked
+       int viTriDongVuaBam = TableKhachHang.getSelectedRow();
+    
+    if (viTriDongVuaBam != -1) { // Kiểm tra xem người dùng đã chọn một dòng trong bảng chưa
+        // Lấy giá trị từ dòng được chọn trong bảng và hiển thị thông tin tương ứng
+        DefaultTableModel model = (DefaultTableModel) TableKhachHang.getModel();
+        int realSelectedRow = TableKhachHang.convertRowIndexToModel(viTriDongVuaBam);
+        
+        // Lấy thông tin từ bảng và hiển thị trong các ô văn bản hoặc các thành phần khác
+        String maKhachHang = model.getValueAt(realSelectedRow, 1).toString();
+        String tenKhachHang = model.getValueAt(realSelectedRow, 2).toString();
+        String diaChi = model.getValueAt(realSelectedRow, 4).toString();
+        String ngaySinhStr = model.getValueAt(realSelectedRow, 8).toString(); // Giả sử cột 4 chứa ngày sinh
+        String soDienThoai = model.getValueAt(realSelectedRow, 5).toString();
+        String gioiTinh = model.getValueAt(realSelectedRow, 3).toString();
+        String loaiKhachHang = model.getValueAt(realSelectedRow, 6).toString(); // Giả sử cột 7 chứa chức vụ
+        String ghiChu = model.getValueAt(realSelectedRow, 7).toString(); // Giả sử cột 9 chứa chú thích
+        // Tiếp tục lấy các thông tin cần thiết từ bảng
+        
+        // Hiển thị thông tin lấy được lên các ô văn bản hoặc các thành phần khác trên giao diện
+        txtma.setText(maKhachHang);
+        txtten.setText(tenKhachHang);
+        txtdiachi.setText(diaChi);
+        txtngaysinh.setText(ngaySinhStr);
+        txtsdt.setText(soDienThoai);
+        // Hiển thị giới tính
+        if (gioiTinh.equals("Nam")) {
+            rdtnNam.setSelected(true);
+            rdtnNu.setSelected(false);
+        } else {
+            rdtnNam.setSelected(false);
+            rdtnNu.setSelected(true);
+        }
+        // Hiển thị chức vụ
+        cbxloai.setSelectedItem(loaiKhachHang);
+        // Hiển thị ngày vào làm
+        // Hiển thị chú thích
+        txtghichu.setText(ghiChu);
+        // Tiếp tục hiển thị các thông tin cần thiết khác lên giao diện
+    }
+    }//GEN-LAST:event_TableKhachHangMouseClicked
+
+    private void ThemKhachHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ThemKhachHangMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ThemKhachHangMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
