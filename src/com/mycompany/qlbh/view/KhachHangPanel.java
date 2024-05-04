@@ -25,20 +25,23 @@ import java.util.Map;
  * @author Dinh Giap
  */
 public class KhachHangPanel extends javax.swing.JPanel {
-    List<String> LoaiKhachHang = new ArrayList<>();
-    private Object buttonGroup1;
     List <KhachHang> KhachHang = new ArrayList<>();
+     public KhachHangPanel() {
+        initComponents();
+        buttonGroup2.add(rdtnNam);
+        buttonGroup2.add(rdtnNu);
+         ThemLoaiKhachHang();
+        ShowdulieuKhachHang();
+    } 
     /**
      * Creates new form jpnKhachHang
      */
-
 public void addKhachHang() {
     if (txtten.getText().isEmpty() || txtdiachi.getText().isEmpty() || 
         txtsdt.getText().isEmpty() || txtngaysinh.getText().isEmpty() || cbxloai.getSelectedIndex() == -1) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
         return; // Không thực hiện thêm khách hàng nếu có trường nhập liệu còn trống
     }
-    KhachHang s = new KhachHang();
     
     String tenKhachHang = txtten.getText();
     boolean gioiTinh = rdtnNam.isSelected(); // Kiểm tra nút radio cho giới tính Nam
@@ -59,38 +62,46 @@ public void addKhachHang() {
         return; // Thoát khỏi phương thức nếu ngày sinh không hợp lệ
     }
 
-    s.setTenKhachHang(tenKhachHang);
-    s.setGioiTinh(gioiTinh); // Đặt giá trị cho gioiTinh
-    s.setDiaChi(diaChi);
-    s.setSoDienThoai(soDienThoai);
-    s.setLoaiKhachHang(loaiKhachHang);
-    s.setGhiChu(ghiChu);
-    s.setNgaySinh(ngaySinh); // Đặt giá trị cho ngày sinh
-
     Connection conn = null;
     PreparedStatement pstmt = null;
+    ResultSet rs = null; // ResultSet for querying MaLoaiKhachHang
     
     try {
         conn = new MyDBConnection().getConnection();
         
-        // SQL query for inserting data into KhachHang table
-        String query = "INSERT INTO KhachHang (TenKhachHang, GioiTinh, NgaySinh, DiaChi, SDT, LoaiKhachHang, GhiChu) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // Lấy mã loại khách hàng tương ứng với tên loại khách hàng
+        String queryLoaiKhachHang = "SELECT MaLoaiKhachHang FROM LoaiKhachHang WHERE TenLoaiKhachHang = ?";
+        pstmt = conn.prepareStatement(queryLoaiKhachHang);
+        pstmt.setString(1, loaiKhachHang);
+        ResultSet rsLoaiKhachHang = pstmt.executeQuery();
+        int maLoaiKhachHang = -1;
+        if (rsLoaiKhachHang.next()) {
+            maLoaiKhachHang = rsLoaiKhachHang.getInt("MaLoaiKhachHang");
+        }
+        rsLoaiKhachHang.close(); // Đóng ResultSet sau khi sử dụng
         
+        if (maLoaiKhachHang == -1) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy mã loại khách hàng cho '" + loaiKhachHang + "'");
+            return; // Thoát khỏi phương thức nếu không tìm thấy mã loại khách hàng
+        }
+        
+        // SQL query for inserting data into KhachHang table
+        String query = "INSERT INTO KhachHang (TenKhachHang, GioiTinh, NgaySinh, DiaChi, SDT,LoaiKhachHang, GhiChu) VALUES (?, ?, ?, ?, ?, ?,?)";
         pstmt = conn.prepareStatement(query);
         
         // Set values for parameters in the SQL query
-        pstmt.setString(1, txtten.getText());
+        pstmt.setString(1, tenKhachHang);
         pstmt.setBoolean(2, gioiTinh); // Chuyển đổi giá trị boolean thành kiểu dữ liệu bit
         pstmt.setDate(3, new java.sql.Date(ngaySinh.getTime())); // Chuyển đổi ngày sinh thành kiểu dữ liệu SQL Date
-        pstmt.setString(4, txtdiachi.getText());
-        pstmt.setString(5, txtsdt.getText());
-        pstmt.setString(6, cbxloai.getSelectedItem().toString());
-        pstmt.setString(7, txtghichu.getText());
+        pstmt.setString(4, diaChi);
+        pstmt.setString(5, soDienThoai);
+        pstmt.setInt(6, maLoaiKhachHang); // Sử dụng mã loại khách hàng thay vì tên loại khách hàng
+        pstmt.setString(7, ghiChu);
         
         // Execute the SQL query
         pstmt.executeUpdate();
         
-        // Close the PreparedStatement
+        // Close the PreparedStatement and Connection
         pstmt.close();
         
         // Notify user that the data has been added successfully
@@ -98,10 +109,10 @@ public void addKhachHang() {
         
         // Clear input fields after adding data
         clearInputFields();
-        displayKhachHang();
+        
     } catch (SQLException ex) {
         ex.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi thêm khách hàng");
+        JOptionPane.showMessageDialog(this, "Lỗi khi thêm khách hàng: " + ex.getMessage());
     } finally {
         // Close the PreparedStatement and Connection in the finally block
         try {
@@ -111,76 +122,80 @@ public void addKhachHang() {
             ex.printStackTrace();
         }
     }
-    
 }
+
 
 private void clearInputFields() {
     // Xóa nội dung của các trường nhập liệu sau khi thêm khách hàng thành công
+    txtma.setText("");
     txtten.setText("");
     txtdiachi.setText("");
     txtsdt.setText("");
     txtngaysinh.setText(""); // Xóa nội dung của trường nhập liệu ngày sinh
-    cbxloai.setSelectedIndex(0);
+    cbxloai.setSelectedIndex(-1);
     txtghichu.setText("");
     // Đặt lại trạng thái của radio button giới tính
     buttonGroup2.clearSelection();
 }
-
-
-  public void showDetail() {
-    int selectedRow = TableKhachHang.getSelectedRow();       
-    if (selectedRow != -1) {       
-        DefaultTableModel model = (DefaultTableModel) TableKhachHang.getModel();
-        int realSelectedRow = TableKhachHang.convertRowIndexToModel(selectedRow); // Chuyển đổi chỉ số hàng từ view sang model
-        KhachHang khachHang = KhachHang.get(realSelectedRow);        
-        // Cập nhật thông tin của khách hàng vào các trường văn bản và các phần tử khác trên giao diện
-        txtma.setText(String.valueOf(khachHang.getMaKhachHang()));
-        txtten.setText(khachHang.getTenKhachHang());
-        txtdiachi.setText(khachHang.getDiaChi());
-        txtsdt.setText(khachHang.getSoDienThoai());
-        txtghichu.setText(khachHang.getGhiChu());
-        // Hiển thị thông tin ngày sinh
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        txtngaysinh.setText(sdf.format(khachHang.getNgaySinh()));
+public void ThemLoaiKhachHang(){
+     Connection conn = new MyDBConnection().getConnection();
+try{             
+         Statement stmt = conn.createStatement();        
+          String queryKH = "SELECT * FROM LoaiKhachHang"; 
+         ResultSet rsKH = stmt.executeQuery(queryKH);                           
+             while (rsKH.next()) {               
+                cbxloai.addItem(rsKH.getString("TenLoaiKhachHang"));              
+            }           
+    } catch (SQLException ex) {
        
-        // Đặt lại trạng thái của radio button giới tính dựa trên giá trị của khách hàng
-        if (khachHang.isGioiTinh()) {
-            rdtnNam.setSelected(true);
-            rdtnNu.setSelected(false);
-        } else {
-            rdtnNam.setSelected(false);
-            rdtnNu.setSelected(true);
-        }        
-        // Đặt lại giá trị của combobox loại khách hàng
-        String loaiKhachHang = khachHang.getLoaiKhachHang();
-        cbxloai.setSelectedItem(loaiKhachHang);
-    } else {
-        // Nếu không có dòng nào được chọn, hiển thị thông báo yêu cầu chọn một khách hàng
-        JOptionPane.showMessageDialog(null, "Vui lòng chọn một khách hàng từ bảng để xem thông tin chi tiết.");
+        ex.printStackTrace();
+    }
+}
+public void displayKhachHang() {
+    DefaultTableModel model = (DefaultTableModel) TableKhachHang.getModel(); 
+    model.setRowCount(0);
+    
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    
+    try {
+        conn = new MyDBConnection().getConnection();
+        
+        // SQL query to retrieve data from KhachHang table
+        String query = "SELECT * FROM KhachHang";
+        pstmt = conn.prepareStatement(query);
+        rs = pstmt.executeQuery();
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        while (rs.next()) {
+            Object[] objKH = new Object[9]; // Số trường dữ liệu của KhachHang
+            objKH[0] = model.getRowCount() + 1; // Số thứ tự
+            objKH[1] = rs.getInt("MaKhachHang");
+            objKH[2] = rs.getString("TenKhachHang");
+            objKH[3] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ";
+            objKH[4] = rs.getString("DiaChi");
+            objKH[5] = rs.getString("SDT");
+            objKH[6] = "";
+            objKH[7] = rs.getString("GhiChu");
+            objKH[8] = rs.getDate("NgaySinh");
+            model.addRow(objKH); // Thêm dòng mới vào bảng
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    } finally {
+        // Close the ResultSet, PreparedStatement, and Connection in the finally block
+        try {
+            if (rs != null) rs.close();
+            if (pstmt != null) pstmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
 
-public void displayKhachHang() {
-    DefaultTableModel model = (DefaultTableModel) TableKhachHang.getModel(); 
 
-    if (!KhachHang.isEmpty()) {
-        KhachHang khachHang = KhachHang.get(KhachHang.size() - 1); // Lấy khách hàng cuối cùng trong danh sách
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Object[] rowData = new Object[]{
-            model.getRowCount() + 1, // Số thứ tự (tính từ 1)
-            khachHang.getMaKhachHang(),
-            khachHang.getTenKhachHang(),
-            khachHang.isGioiTinh() ? "Nam" : "Nữ", 
-            khachHang.getNgaySinh() != null ? sdf.format(khachHang.getNgaySinh()) : "", // Hiển thị ngày sinh nếu có
-            khachHang.getDiaChi(),
-            khachHang.getSoDienThoai(),
-            khachHang.getLoaiKhachHang(),
-            khachHang.getGhiChu(),
-            khachHang.getChuThich()
-        };
-        model.addRow(rowData); // Thêm dòng mới vào bảng
-    }
-} 
 
 public void removeKhachHang() {
     int selectedRow = TableKhachHang.getSelectedRow();
@@ -227,18 +242,52 @@ public void updateKhachHang() {
         String loaiKhachHang = (String) cbxloai.getSelectedItem();
         String ghiChu = txtghichu.getText();
         
-        // Cập nhật thông tin trong cơ sở dữ liệu
-        Connection conn = new MyDBConnection().getConnection();
+        // Lấy mã loại khách hàng từ bảng LoaiKhachHang
+        int maLoaiKhachHang = -1;
+        Connection conn = null;
+        PreparedStatement pstmtLoaiKH = null;
+        ResultSet rsLoaiKH = null;
         try {
-            PreparedStatement pstmt = conn.prepareStatement("UPDATE KhachHang SET TenKhachHang = ?, GioiTinh = ?, DiaChi = ?, SDT = ?, LoaiKhachHang = ?, GhiChu = ? WHERE MaKhachHang = ?");
-            pstmt.setString(1, tenKhachHang);
-            pstmt.setBoolean(2, gioiTinh);
-            pstmt.setString(3, diaChi);
-            pstmt.setString(4, soDienThoai);
-            pstmt.setString(5, loaiKhachHang);
-            pstmt.setString(6, ghiChu);
-            pstmt.setInt(7, maKhachHang);
-            int rowsUpdated = pstmt.executeUpdate();
+            conn = new MyDBConnection().getConnection();
+            String queryLoaiKH = "SELECT MaLoaiKhachHang FROM LoaiKhachHang WHERE TenLoaiKhachHang = ?";
+            pstmtLoaiKH = conn.prepareStatement(queryLoaiKH);
+            pstmtLoaiKH.setString(1, loaiKhachHang);
+            rsLoaiKH = pstmtLoaiKH.executeQuery();
+            if (rsLoaiKH.next()) {
+                maLoaiKhachHang = rsLoaiKH.getInt("MaLoaiKhachHang");
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rsLoaiKH != null) rsLoaiKH.close();
+                if (pstmtLoaiKH != null) pstmtLoaiKH.close();
+                if (conn != null) conn.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        
+        // Nếu không tìm thấy mã loại khách hàng, thông báo lỗi và không thực hiện cập nhật
+        if (maLoaiKhachHang == -1) {
+            JOptionPane.showMessageDialog(null, "Không tìm thấy mã loại khách hàng cho '" + loaiKhachHang + "'");
+            return;
+        }
+        
+        // Cập nhật thông tin trong cơ sở dữ liệu
+        Connection connUpdate = null;
+        PreparedStatement pstmtUpdate = null;
+        try {
+            connUpdate = new MyDBConnection().getConnection();
+            pstmtUpdate = connUpdate.prepareStatement("UPDATE KhachHang SET TenKhachHang = ?, GioiTinh = ?, DiaChi = ?, SDT = ?, LoaiKhachHang = ?, GhiChu = ? WHERE MaKhachHang = ?");
+            pstmtUpdate.setString(1, tenKhachHang);
+            pstmtUpdate.setBoolean(2, gioiTinh);
+            pstmtUpdate.setString(3, diaChi);
+            pstmtUpdate.setString(4, soDienThoai);
+            pstmtUpdate.setInt(5, maLoaiKhachHang);
+            pstmtUpdate.setString(6, ghiChu);
+            pstmtUpdate.setInt(7, maKhachHang);
+            int rowsUpdated = pstmtUpdate.executeUpdate();
             if (rowsUpdated > 0) {
                 JOptionPane.showMessageDialog(null, "Thông tin khách hàng đã được cập nhật thành công trong cơ sở dữ liệu!");
                 
@@ -252,10 +301,17 @@ public void updateKhachHang() {
             } else {
                 JOptionPane.showMessageDialog(null, "Không có thông tin nào được cập nhật trong cơ sở dữ liệu!");
             }
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi cập nhật thông tin khách hàng trong cơ sở dữ liệu!");
+        } finally {
+            // Đóng PreparedStatement và Connection
+            try {
+                if (pstmtUpdate != null) pstmtUpdate.close();
+                if (connUpdate != null) connUpdate.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
@@ -280,29 +336,17 @@ public void reset() {
     model.setRowCount(0);
 }
 
-  public KhachHangPanel() {
-        initComponents();
-        buttonGroup2.add(rdtnNam);
-        buttonGroup2.add(rdtnNu);
-        LoaiKhachHang.add("1");
-        LoaiKhachHang.add("2");
-        LoaiKhachHang.add("3");
-        cbxloai.removeAllItems();
-        for(String loai : LoaiKhachHang){
-            cbxloai.addItem(loai);
-        }
-        ShowdulieuKhachHang();
-    } 
+ 
 
   private void ShowdulieuKhachHang() {
     DefaultTableModel model = (DefaultTableModel) TableKhachHang.getModel();
     Connection conn = new MyDBConnection().getConnection();
     try {
-        String queryKH = "SELECT KhachHang.MaKhachHang, KhachHang.TenKhachHang, KhachHang.GioiTinh, " +
-                         "KhachHang.DiaChi, KhachHang.SDT, LoaiKhachHang.TenLoaiKhachHang, " +
-                         "KhachHang.GhiChu, KhachHang.NgaySinh " +
-                         "FROM KhachHang INNER JOIN LoaiKhachHang " +
-                         "ON KhachHang.LoaiKhachHang = LoaiKhachHang.MaLoaiKhachHang";
+        String queryKH = "SELECT KhachHang.*, LoaiKhachHang.TenLoaiKhachHang " +
+                 "FROM KhachHang  " +
+                "INNER JOIN LoaiKhachHang ON KhachHang.LoaiKhachHang = LoaiKhachHang.MaLoaiKhachHang";
+                 
+
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(queryKH);
         while (rs.next()) {
@@ -455,7 +499,8 @@ public void reset() {
             }
         });
 
-        cbxloai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxloai.setSelectedIndex(-1);
+        cbxloai.setToolTipText("");
 
         jLabel6.setText("Ngày Sinh");
 

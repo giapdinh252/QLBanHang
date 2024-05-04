@@ -23,7 +23,6 @@ import javax.swing.table.DefaultTableModel;
  * @author ADMIN
  */
 public class NhanVienPanel extends javax.swing.JPanel {
-    List<String> ChucVu = new ArrayList<>();
     List <NhanVien> NhanVien = new ArrayList<>();
     /**
      * Creates new form NhanVienPanel
@@ -33,16 +32,7 @@ public class NhanVienPanel extends javax.swing.JPanel {
         initComponents();
         buttonGroup1.add(rbtnNam);
         buttonGroup1.add(rbtnNu);
-        ChucVu.add("1");
-        ChucVu.add("2");
-        ChucVu.add("3");
-        ChucVu.add("4");
-        ChucVu.add("5");
-        ChucVu.add("6");
-        cbxChucVu.removeAllItems();
-        for(String loai : ChucVu){
-            cbxChucVu.addItem(loai);
-        }
+        ThemChucVu();
         ShowdulieuNhanVien();
     }
 private void ShowdulieuNhanVien() {
@@ -105,9 +95,24 @@ public void addNhanVien() {
     try {
         conn = new MyDBConnection().getConnection();
         
+        // Truy vấn SQL để lấy mã chức vụ từ tên chức vụ
+        String queryChucVu = "SELECT MaChucVu FROM ChucVu WHERE TenChucVu = ?";
+        pstmt = conn.prepareStatement(queryChucVu);
+        pstmt.setString(1, chucVu);
+        ResultSet rsChucVu = pstmt.executeQuery();
+        int maChucVu = -1;
+        if (rsChucVu.next()) {
+            maChucVu = rsChucVu.getInt("MaChucVu");
+        }
+        rsChucVu.close(); // Đóng ResultSet sau khi sử dụng
+        
+        if (maChucVu == -1) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy mã chức vụ cho '" + chucVu + "'");
+            return; // Thoát khỏi phương thức nếu không tìm thấy mã chức vụ
+        }
+        
         // SQL query for inserting data into NhanVien table without joining to ChucVu table
         String query = "INSERT INTO NhanVien (TenNhanVien, GioiTinh, DiaChi, SoDT, ChucVu, NgaySinh, NgayVaoLam, GhiChu) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
         pstmt = conn.prepareStatement(query);
         
         // Set values for parameters in the SQL query
@@ -115,7 +120,7 @@ public void addNhanVien() {
         pstmt.setBoolean(2, gioiTinh); // Chuyển đổi giá trị boolean thành kiểu dữ liệu bit
         pstmt.setString(3, diaChi);
         pstmt.setString(4, soDienThoai);
-        pstmt.setString(5, chucVu);
+        pstmt.setInt(5, maChucVu); // Sử dụng mã chức vụ lấy được
         pstmt.setDate(6, new java.sql.Date(ngaySinh.getTime())); // Chuyển đổi ngày sinh thành kiểu dữ liệu SQL Date
         
         // Chuyển đổi ngày vào làm từ String thành kiểu dữ liệu SQL Date
@@ -166,6 +171,21 @@ private void clearInputFields() {
     cbxChucVu.setSelectedIndex(-1);
     txtchuthich.setText("");
 }
+ public void ThemChucVu(){
+     Connection conn = new MyDBConnection().getConnection();
+try{             
+         Statement stmt = conn.createStatement();
+         String queryNV = "SELECT * FROM ChucVu";
+         ResultSet rsNV = stmt.executeQuery(queryNV);   
+            while (rsNV.next()) {               
+                cbxChucVu.addItem(rsNV.getString("TenChucVu"));               
+            }
+                      
+    } catch (SQLException ex) {
+       
+        ex.printStackTrace();
+    }
+ }
 public void removeNhanVien() {
     int selectedRow = TableNhanVien.getSelectedRow();
     if (selectedRow != -1) {
@@ -208,7 +228,7 @@ public void updateNhanVien() {
         boolean gioiTinh = rbtnNam.isSelected();
         String diaChi = txtdiachi.getText();
         String soDienThoai = txtsdt.getText();
-        String chucVu = (String) cbxChucVu.getSelectedItem(); // Lấy thông tin chức vụ từ combobox
+        String tenChucVu = (String) cbxChucVu.getSelectedItem(); // Lấy tên chức vụ từ combobox
         // Lấy ngày sinh từ JTextField và chuyển đổi sang định dạng Date
         String ngaySinhStr = txtngaysinh.getText();
         Date ngaySinh = null;
@@ -235,17 +255,35 @@ public void updateNhanVien() {
         
         // Cập nhật thông tin trong cơ sở dữ liệu
         Connection conn = new MyDBConnection().getConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement pstmt = conn.prepareStatement("UPDATE NhanVien SET TenNhanVien = ?, GioiTinh = ?, DiaChi = ?, SoDT = ?, ChucVu = ?, NgaySinh = ?, NgayVaoLam = ?, GhiChu = ? WHERE MaNhanVien = ?");
+            // Lấy mã chức vụ tương ứng với tên chức vụ
+            String chucvuQuery = "SELECT MaChucVu FROM ChucVu WHERE TenChucVu = ?";
+            pstmt = conn.prepareStatement(chucvuQuery);
+            pstmt.setString(1, tenChucVu);
+            rs = pstmt.executeQuery();
+            int maChucVu = -1;
+            if (rs.next()) {
+                maChucVu = rs.getInt("MaChucVu");
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy mã chức vụ tương ứng với tên chức vụ đã chọn.");
+                return; // Thoát khỏi phương thức nếu không tìm thấy mã chức vụ
+            }
+            
+            // Thực hiện câu truy vấn cập nhật thông tin nhân viên
+            String updateQuery = "UPDATE NhanVien SET TenNhanVien = ?, GioiTinh = ?, DiaChi = ?, SoDT = ?, ChucVu = ?, NgaySinh = ?, NgayVaoLam = ?, GhiChu = ? WHERE MaNhanVien = ?";
+            pstmt = conn.prepareStatement(updateQuery);
             pstmt.setString(1, tenNhanVien);
             pstmt.setBoolean(2, gioiTinh);
             pstmt.setString(3, diaChi);
             pstmt.setString(4, soDienThoai);
-            pstmt.setString(5, chucVu);
-            pstmt.setDate(6, new java.sql.Date(ngaySinh.getTime())); // Chuyển đổi ngày sinh thành kiểu dữ liệu SQL Date
-            pstmt.setDate(7, new java.sql.Date(ngayVaoLam.getTime())); // Chuyển đổi ngày vào làm thành kiểu dữ liệu SQL Date
+            pstmt.setInt(5, maChucVu);
+            pstmt.setDate(6, new java.sql.Date(ngaySinh.getTime()));
+            pstmt.setDate(7, new java.sql.Date(ngayVaoLam.getTime()));
             pstmt.setString(8, ghiChu);
             pstmt.setInt(9, maNhanVien);
+            
             int rowsUpdated = pstmt.executeUpdate();
             if (rowsUpdated > 0) {
                 JOptionPane.showMessageDialog(null, "Thông tin nhân viên đã được cập nhật thành công trong cơ sở dữ liệu!");
@@ -255,17 +293,28 @@ public void updateNhanVien() {
                 model.setValueAt(gioiTinh ? "Nam" : "Nữ", realSelectedRow, 3); 
                 model.setValueAt(diaChi, realSelectedRow, 4); 
                 model.setValueAt(soDienThoai, realSelectedRow, 5); 
-                model.setValueAt(chucVu, realSelectedRow, 6); 
+                model.setValueAt(tenChucVu, realSelectedRow, 6); // Sử dụng tên chức vụ thay vì mã chức vụ
                 model.setValueAt(ngaySinh, realSelectedRow, 7); 
                 model.setValueAt(ngayVaoLam, realSelectedRow, 8); 
                 model.setValueAt(ghiChu, realSelectedRow, 9); 
             } else {
                 JOptionPane.showMessageDialog(null, "Không có thông tin nào được cập nhật trong cơ sở dữ liệu!");
             }
-            pstmt.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi cập nhật thông tin nhân viên trong cơ sở dữ liệu!");
+        } finally {
+            // Đóng ResultSet và PreparedStatement
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }
@@ -433,8 +482,6 @@ public void displayNhanVien() {
         rbtnNu.setText("Nữ");
 
         jLabel7.setText("Chức Vụ");
-
-        cbxChucVu.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel8.setText("Ngày Vào Làm");
 
