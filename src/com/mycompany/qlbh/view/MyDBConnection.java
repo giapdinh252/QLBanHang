@@ -20,7 +20,7 @@ public class MyDBConnection {
     private static final String SERVER = "localhost";
     private static final String USER = "sa";
     private static final String PASSWORD = "123456";
-    private static final String DB_NAME = "QuanLySanPham";
+    private static final String DB_NAME = "QLySanPham";
     private static final String PORT = "1433";
 
     public Connection getConnection() {

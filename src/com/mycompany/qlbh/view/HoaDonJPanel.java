@@ -38,11 +38,12 @@ public class HoaDonJPanel extends javax.swing.JPanel {
 //    --------------------------------------------------------------------------------------
     
    public HoaDonJPanel() {
-        initComponents();       
-        ShowdulieuHoaDon();
+        initComponents(); 
         ThemNhanvien();
         ThemKhachHang(); 
         ThemSP();
+        ShowdulieuHoaDon();
+    
        
         
     }
@@ -72,7 +73,7 @@ public void ErrorMessageDelete() {
         JTextField tien = txtTongTienHD;
         JTextField MaHD = txtHoaDonHD;
         if (tien.getText().isEmpty() || MaHD.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn dữ liệu cần xóa !", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn CTHD cần xoá.");
         } else {
             int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
@@ -159,6 +160,7 @@ try {
 }
 
     }
+   
     
     public void removeHoaDonBan(){
     int selectedRow = TableHoaDon.getSelectedRow();
@@ -218,6 +220,12 @@ try {
         model.setValueAt(i + 1, i, 0); 
     }
 }
+    public void updateSTTColumnCTHD() {
+    DefaultTableModel model = (DefaultTableModel) TableCTHD.getModel();
+    for (int i = 0; i < model.getRowCount(); i++) {
+        model.setValueAt(i + 1, i, 0); 
+    }
+    }
 //    --------------------------------------------------------------------------------------
 public void showDetail(){
         int i= TableHoaDon.getSelectedRow();            
@@ -229,6 +237,8 @@ public void showDetail(){
         txtTongTienHD.setText(String.valueOf(hd.getTongTien()));
         txtNgayLap.setText(hd.getNgayBan());
         txtMaHoaDonCTHD.setText(String.valueOf(hd.getMaHoaDon()));
+   
+     
     }
 //    --------------------------------------------------------------------------------------
     
@@ -311,10 +321,7 @@ try{
     String NhanVien = txtNhanVien.getSelectedItem().toString();
     String KhachHang = txtKhachHang.getSelectedItem().toString();
     
-    try {
-        
-        conn = new MyDBConnection().getConnection();
-      
+    try {     
        Statement stmt = conn.createStatement();    
     String maKhachHangQuery = "SELECT MaKhachHang FROM KhachHang WHERE TenKhachHang = N'" + KhachHang + "'";
 
@@ -336,7 +343,7 @@ try{
         st.setString(3, txtNgayLap.getText());
         st.setDouble(4, parseDouble(txtTongTienHD.getText()));
         st.setString(5, GhiChuHoaDon.getText());
-        st.setInt(6, Integer.parseInt(model.getValueAt(selectedRowIndex, 1).toString())); // Assuming MaHoaDon is in the first column
+        st.setInt(6, Integer.parseInt(model.getValueAt(selectedRowIndex, 1).toString())); 
        
         int rowsUpdated = st.executeUpdate();
         if (rowsUpdated > 0) {
@@ -349,19 +356,13 @@ try{
     }
       
         
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật dữ liệu: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    } finally {
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi đóng kết nối: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật dữ liệu: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    } 
     
 }
+ 
+
 //    --------------------------------------------------------------
     public void reset(){
         txtHoaDonHD.setText("");      
@@ -382,6 +383,7 @@ public void TinhTienSP() {
 }
 public void batLoiSL(){
     int SoLuong = 0;
+    
     String soLuongText = txtSoLuong.getText();
 if (!soLuongText.isEmpty()) {
     try {
@@ -439,7 +441,7 @@ public int MaSanPham(){
     DefaultTableModel model = (DefaultTableModel)TableCTHD.getModel();
     Connection conn = new MyDBConnection().getConnection();
     model.setRowCount(0);
-    String maHoaDonText = txtHoaDonHD.getText();
+    String maHoaDonText = txtMaHoaDonCTHD.getText();
     if (maHoaDonText.isEmpty()) {   
     return;
 }
@@ -482,7 +484,7 @@ public void showDetailCTHD() {
     int selectedIndex = TableCTHD.getSelectedRow();
     if (selectedIndex == -1) {
         return;
-    }   
+    }      
     ChiTietHoaDon CTHD = chiTietHoaDons.get(selectedIndex);
     int maSanPham = CTHD.getMaSanPham();
     System.out.println(maSanPham);
@@ -504,7 +506,40 @@ public void showDetailCTHD() {
     txtTongTienCTHD.setText(String.valueOf(CTHD.getTongTien()));       
 }
 
-
+     public void XoaCTHD(){
+       DefaultTableModel model = (DefaultTableModel) TableCTHD.getModel();
+        int selectedRow = TableCTHD.getSelectedRow();
+        int MaCTHD;
+    if (selectedRow == -1) { 
+         JOptionPane.showMessageDialog(null, "Vui lòng chọn CTHD cần xoá.");
+        return;
+    }else{   
+        MaCTHD=Integer.parseInt(model.getValueAt(selectedRow, 1).toString());
+         
+       
+        int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                if (!txtMaCTHD.getText().isEmpty()) { 
+                     chiTietHoaDons.remove(selectedRow); 
+                     model.removeRow(selectedRow);
+                    JOptionPane.showMessageDialog(null, "Xóa dữ liệu hóa đơn thành công !", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn dữ liệu cần xóa !", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                
+            }
+    }    
+    String querychitietHD = "DELETE FROM ChiTietHoaDon WHERE MaCTHD = "+ MaCTHD ;
+    Connection conn = new MyDBConnection().getConnection();
+    try (PreparedStatement pstmt = conn.prepareStatement(querychitietHD)) {
+   
+    pstmt.executeUpdate();
+    
+} catch (SQLException ex) {
+    ex.printStackTrace();
+}
+    }
      public void ThemSP(){
          Connection conn = new MyDBConnection().getConnection();
 try{             
@@ -548,8 +583,42 @@ try{
     ex.printStackTrace();
 }
     }
-
+    
     }
+     public void suaCTHD() {
+    DefaultTableModel model = (DefaultTableModel) TableCTHD.getModel();
+    Connection conn = new MyDBConnection().getConnection();
+    int selectedRowIndex = TableCTHD.getSelectedRow();
+
+    if (selectedRowIndex == -1) {
+        JOptionPane.showMessageDialog(null, "Vui lòng chọn CTHD cần sửa.");
+        return;
+    }
+
+    try {
+        String sql = "UPDATE ChiTietHoaDon SET MaHoaDon = ?, MaSanPham = ?, SoLuong = ?, TongTien = ?, GhiChu = ? WHERE MaCTHD = ?";
+        PreparedStatement st = conn.prepareStatement(sql);
+        st.setInt(1, Integer.parseInt(txtMaHoaDonCTHD.getText()));
+        st.setInt(2,  MaSanPham());
+        st.setInt(3, Integer.parseInt(txtSoLuong.getText()));
+        st.setDouble(4, Double.parseDouble(txtTongTienCTHD.getText()));
+        st.setString(5, GhiChuCTHD.getText());
+        st.setInt(6, Integer.parseInt(model.getValueAt(selectedRowIndex, 1).toString())); 
+
+        int rowsUpdated = st.executeUpdate();
+        
+    } catch (SQLException ex) {
+         ex.printStackTrace();   
+      }
+} 
+       public void resetCTHD(){
+        txtMaCTHD.setText("");      
+        txtSoLuong.setText("");
+        txtTongTienCTHD.setText("");
+        GhiChuCTHD.setText("");
+        txtMaHoaDonCTHD.setText("");
+    }
+
      
     /**
      * This method is called from within the constructor to initialize the form.
@@ -853,6 +922,12 @@ try{
 
         jLabel12.setText("Tổng Tiền");
 
+        txtMaCTHD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtMaCTHDMouseClicked(evt);
+            }
+        });
+
         jcbSanPham.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jcbSanPham.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -879,6 +954,11 @@ try{
             }
         });
 
+        txtTongTienCTHD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtTongTienCTHDMouseClicked(evt);
+            }
+        });
         txtTongTienCTHD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtTongTienCTHDActionPerformed(evt);
@@ -886,10 +966,30 @@ try{
         });
 
         jButton5.setText("Sửa");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton5MouseClicked(evt);
+            }
+        });
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Xóa");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText("Reset");
+        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton7MouseClicked(evt);
+            }
+        });
 
         jButton8.setText("Thêm");
         jButton8.setToolTipText("");
@@ -905,6 +1005,11 @@ try{
         GhiChuCTHD.setRows(5);
         jScrollPane2.setViewportView(GhiChuCTHD);
 
+        txtMaHoaDonCTHD.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtMaHoaDonCTHDMouseClicked(evt);
+            }
+        });
         txtMaHoaDonCTHD.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMaHoaDonCTHDActionPerformed(evt);
@@ -1044,9 +1149,11 @@ try{
          
     
     private void ThemHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemHoaDonActionPerformed
-       ErrorMessage();
+       
+        ErrorMessage();
        addHoaDonBan();
        ShowdulieuHoaDon();
+       
        
        
       
@@ -1086,7 +1193,9 @@ try{
     }//GEN-LAST:event_txtHoaDonHDMouseClicked
 
     private void TableHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableHoaDonMouseClicked
+    
     showDetail();
+    
     ShowdulieuCTHD();
     }//GEN-LAST:event_TableHoaDonMouseClicked
 
@@ -1138,8 +1247,41 @@ try{
     }//GEN-LAST:event_jcbSanPhamMouseClicked
 
     private void TableCTHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableCTHDMouseClicked
+       
         showDetailCTHD();
+      
+        
     }//GEN-LAST:event_TableCTHDMouseClicked
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+       XoaCTHD();
+       updateSTTColumnCTHD();
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
+        suaCTHD();
+        ShowdulieuCTHD();
+    }//GEN-LAST:event_jButton5MouseClicked
+
+    private void txtTongTienCTHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtTongTienCTHDMouseClicked
+        txtTongTienCTHD.setEditable(false);
+    }//GEN-LAST:event_txtTongTienCTHDMouseClicked
+
+    private void jButton7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton7MouseClicked
+       resetCTHD();
+    }//GEN-LAST:event_jButton7MouseClicked
+
+    private void txtMaCTHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtMaCTHDMouseClicked
+        txtMaCTHD.setEditable(false);
+    }//GEN-LAST:event_txtMaCTHDMouseClicked
+
+    private void txtMaHoaDonCTHDMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtMaHoaDonCTHDMouseClicked
+        txtMaHoaDonCTHD.setEditable(false);
+    }//GEN-LAST:event_txtMaHoaDonCTHDMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -18,7 +18,7 @@ public class QLBanHang {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-      new MainJFrame();   
+     new MainJFrame();
 
 //        var server = "localhost";
 //var user = "sa";

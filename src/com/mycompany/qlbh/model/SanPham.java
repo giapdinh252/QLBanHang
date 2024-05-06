@@ -11,20 +11,32 @@ package com.mycompany.qlbh.model;
 public class SanPham {
     private int MaSanPham;
     private String TenSanPham;
-    private String LoaiSanPham;
+    private int LoaiSanPham;
     private int DonGiaBan;
     private int DonGiaNhap;
-    private String HangSanXuat;
+    private int HangSanXuat;
     private String Ghichu;
-
-    public SanPham(int MaSanPham, String TenSanPham, String LoaiSanPham, int DonGiaBan, int DonGiaNhap, String HangSanXuat, String Ghichu) {
+    private int TonKho;
+    public SanPham(){
+    }
+    public SanPham(int MaSanPham, String TenSanPham, int LoaiSanPham, int DonGiaBan, int DonGiaNhap, int HangSanXuat, String Ghichu,int TonKho) {
         this.MaSanPham = MaSanPham;
         this.TenSanPham = TenSanPham;
         this.LoaiSanPham = LoaiSanPham;
         this.DonGiaBan = DonGiaBan;
         this.DonGiaNhap = DonGiaNhap;
         this.HangSanXuat = HangSanXuat;
+        this.TonKho = TonKho;
         this.Ghichu = Ghichu;
+        this.TonKho = TonKho;
+    }
+
+    public int getTonKho() {
+        return TonKho;
+    }
+
+    public void setTonKho(int TonKho) {
+        this.TonKho = TonKho;
     }
 
     public int getMaSanPham() {
@@ -43,11 +55,11 @@ public class SanPham {
         this.TenSanPham = TenSanPham;
     }
 
-    public String getLoaiSanPham() {
+    public int getLoaiSanPham() {
         return LoaiSanPham;
     }
 
-    public void setLoaiSanPham(String LoaiSanPham) {
+    public void setLoaiSanPham(int LoaiSanPham) {
         this.LoaiSanPham = LoaiSanPham;
     }
 
@@ -67,11 +79,11 @@ public class SanPham {
         this.DonGiaNhap = DonGiaNhap;
     }
 
-    public String getHangSanXuat() {
+    public int getHangSanXuat() {
         return HangSanXuat;
     }
 
-    public void setHangSanXuat(String HangSanXuat) {
+    public void setHangSanXuat(int HangSanXuat) {
         this.HangSanXuat = HangSanXuat;
     }
 
