@@ -44,7 +44,7 @@ public class DangNhapJDialog extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         jlbMsg = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        chuyensangdangky = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -68,9 +68,14 @@ public class DangNhapJDialog extends javax.swing.JDialog {
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mycompany/qlbh/icon/hinhdangnhap.jpg"))); // NOI18N
 
-        jButton1.setBackground(new java.awt.Color(51, 255, 255));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton1.setText("Đăng Ký");
+        chuyensangdangky.setBackground(new java.awt.Color(51, 255, 255));
+        chuyensangdangky.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        chuyensangdangky.setText("Đăng Ký");
+        chuyensangdangky.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chuyensangdangkyActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jpnRootLayout = new javax.swing.GroupLayout(jpnRoot);
         jpnRoot.setLayout(jpnRootLayout);
@@ -91,7 +96,7 @@ public class DangNhapJDialog extends javax.swing.JDialog {
                         .addGroup(jpnRootLayout.createSequentialGroup()
                             .addComponent(btnSubmit)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(chuyensangdangky, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addComponent(jtfTenDangNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jtfMatKhau, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -116,7 +121,7 @@ public class DangNhapJDialog extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(jpnRootLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnSubmit)
-                            .addComponent(jButton1))
+                            .addComponent(chuyensangdangky))
                         .addGap(18, 18, 18)
                         .addComponent(jlbMsg)))
                 .addContainerGap(54, Short.MAX_VALUE))
@@ -135,6 +140,15 @@ public class DangNhapJDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void chuyensangdangkyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chuyensangdangkyActionPerformed
+        // TODO add your handling code here:
+        // Đóng form đăng nhập
+        this.dispose();
+        DangKyJDialog dangkyDialog = new DangKyJDialog((java.awt.Frame) this.getParent(), true);
+       // Hiển thị form đăng nhập
+       dangkyDialog.setVisible(true);
+    }//GEN-LAST:event_chuyensangdangkyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -163,6 +177,8 @@ public class DangNhapJDialog extends javax.swing.JDialog {
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -181,7 +197,7 @@ public class DangNhapJDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSubmit;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton chuyensangdangky;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
