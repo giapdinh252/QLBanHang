@@ -272,13 +272,12 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
 
     private void chuyensangdangnhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chuyensangdangnhapActionPerformed
         // TODO add your handling code here:
+         // Đóng form đăng ký
+         this.dispose();
         // Tạo một đối tượng DangNhapJDialog
-    DangNhapJDialog dangNhapDialog = new DangNhapJDialog((java.awt.Frame) this.getParent(), true);
-    // Hiển thị form đăng nhập
-    dangNhapDialog.setVisible(true);
-    // Đóng form đăng ký
-    this.dispose();
-    
+         DangNhapJDialog dangNhapDialog = new DangNhapJDialog((java.awt.Frame) this.getParent(), true);
+         // Hiển thị form đăng nhập
+         dangNhapDialog.setVisible(true);
     }//GEN-LAST:event_chuyensangdangnhapActionPerformed
 
     /**
