@@ -1153,6 +1153,7 @@ try{
         ErrorMessage();
        addHoaDonBan();
        ShowdulieuHoaDon();
+       showDetail();
        
        
        
@@ -1193,10 +1194,9 @@ try{
     }//GEN-LAST:event_txtHoaDonHDMouseClicked
 
     private void TableHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableHoaDonMouseClicked
-    
+     ShowdulieuCTHD();
     showDetail();
-    
-    ShowdulieuCTHD();
+   
     }//GEN-LAST:event_TableHoaDonMouseClicked
 
     private void XoaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaHoaDonActionPerformed

@@ -2,6 +2,7 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+<<<<<<< HEAD
         <group>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/NhanVienPanel.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/MainJFrame.java</file>
@@ -14,5 +15,8 @@
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/controller/ChuyenManHinhController.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/bean/DanhMucBean.java</file>
         </group>
+=======
+        <group/>
+>>>>>>> 3fa9c46783d878f66aeb04db0da50f3c8a466ae9
     </open-files>
 </project-private>
