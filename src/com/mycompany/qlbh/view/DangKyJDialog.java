@@ -25,7 +25,7 @@ public class DangKyJDialog extends javax.swing.JDialog {
         initComponents();
     }
 private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
-        JOptionPane.showMessageDialog(null, noiDungThongBao,
+        JOptionPane.showMessageDialog(new JFrame(), noiDungThongBao,
                 tieuDeThongBao, icon);
     }
  private boolean KiemTraChuaChuVaSo(String chuoi) {
@@ -173,24 +173,23 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
     public static int quyen = 0;
     public static String ten = "";
     private void ThemtaikhoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemtaikhoanActionPerformed
-        // TODO add your handling code here:
-     // Khai báo các biến kết nối CSDL
+
     Connection conn = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     ResultSet rs2 = null;
 
     try {
-        // Lấy kết nối tới CSDL
+        
         conn = new MyDBConnection().getConnection();
 
-        // Lấy thông tin từ các trường nhập liệu trên form
+        
         String MaNhanVien = txtMaNhanVien.getText().trim();
         String TenDangNhap = txtUserName.getText();
         String Password = String.valueOf(txtPassword.getPassword()).trim();
         String NhapLai = String.valueOf(txtRetypePasswword.getPassword());
 
-        // Lấy quyền mặc định từ CSDL
+        
         String Quyen = "";
         String cautruyvan = "SELECT * FROM Quyen WHERE TenQuyen = 'New'";
         pstmt = conn.prepareStatement(cautruyvan);
@@ -199,7 +198,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
             Quyen = rs.getString("MaQuyen");
         }
 
-        // Kiểm tra các điều kiện đầu vào
+       
         boolean kt = true;
 
         if (MaNhanVien.isEmpty() || TenDangNhap.isEmpty() || Password.isEmpty() || NhapLai.isEmpty()) {
@@ -213,7 +212,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
         } else if (!Password.equals(NhapLai)) {
             ThongBao("Nhập lại mật khẩu không khớp", "Thông báo", JOptionPane.ERROR_MESSAGE);
         } else {
-            // Kiểm tra xem mã nhân viên có tồn tại trong CSDL không
+            
             String cautruyvan2 = "SELECT * FROM NhanVien WHERE MaNhanVien = ?";
             pstmt = conn.prepareStatement(cautruyvan2);
             pstmt.setString(1, MaNhanVien);
@@ -221,7 +220,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
             if (!rs2.next()) {
                 ThongBao("Mã nhân viên không tồn tại, vui lòng nhập lại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
             } else {
-                // Kiểm tra xem tài khoản đã tồn tại trong CSDL chưa
+                
                 String cautruyvan3 = "SELECT * FROM Users WHERE MaNhanVien = ?";
                 pstmt = conn.prepareStatement(cautruyvan3);
                 pstmt.setString(1, MaNhanVien);
@@ -229,7 +228,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
                 if (rs2.next()) {
                     ThongBao("Tài khoản của nhân viên có mã: " + MaNhanVien + " đã tồn tại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    // Thêm tài khoản mới vào CSDL
+                    
                     String ctv = "INSERT INTO Users VALUES (?, ?, ?, ?, N' ')";
                     pstmt = conn.prepareStatement(ctv);
                     pstmt.setString(1, MaNhanVien);
@@ -248,7 +247,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
     } catch (SQLException ex) {
         ex.printStackTrace();
     } finally {
-        // Đóng tất cả các kết nối và tài nguyên
+        
         try {
             if (rs != null) {
                 rs.close();
@@ -269,12 +268,11 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
     }//GEN-LAST:event_ThemtaikhoanActionPerformed
 
     private void chuyensangdangnhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chuyensangdangnhapActionPerformed
-        // TODO add your handling code here:
-         // Đóng form đăng ký
+       
          this.dispose();
-        // Tạo một đối tượng DangNhapJDialog
+      
          DangNhapJDialog dangNhapDialog = new DangNhapJDialog((java.awt.Frame) this.getParent(), true);
-         // Hiển thị form đăng nhập
+         
          dangNhapDialog.setVisible(true);
     }//GEN-LAST:event_chuyensangdangnhapActionPerformed
 

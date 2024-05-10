@@ -698,6 +698,23 @@ public void displayNhanVien() {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetActionPerformed
+
+        resetNhanVien();
+    }//GEN-LAST:event_ResetActionPerformed
+
+    private void SửaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SửaActionPerformed
+        // TODO add your handling code here:
+        updateNhanVien();
+        displayNhanVien();
+    }//GEN-LAST:event_SửaActionPerformed
+
+    private void XóaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XóaActionPerformed
+        // TODO add your handling code here:
+        removeNhanVien();
+        displayNhanVien();
+    }//GEN-LAST:event_XóaActionPerformed
+
     private void ThêmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThêmActionPerformed
         // TODO add your handling code here:
         addNhanVien();
@@ -709,67 +726,46 @@ public void displayNhanVien() {
         txtma.setEditable(false);
     }//GEN-LAST:event_txtmaMouseClicked
 
-    private void XóaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XóaActionPerformed
-        // TODO add your handling code here:
-        removeNhanVien();
-        displayNhanVien();
-    }//GEN-LAST:event_XóaActionPerformed
-
-    private void SửaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SửaActionPerformed
-        // TODO add your handling code here:
-        updateNhanVien();
-        displayNhanVien();
-    }//GEN-LAST:event_SửaActionPerformed
-
-    private void ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetActionPerformed
-        
-        resetNhanVien();
-       
-    }//GEN-LAST:event_ResetActionPerformed
-
     private void TableNhanVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableNhanVienMouseClicked
-        
-    int viTriDongVuaBam = TableNhanVien.getSelectedRow();
-    
-    if (viTriDongVuaBam != -1) { 
-       
-        DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
-        int realSelectedRow = TableNhanVien.convertRowIndexToModel(viTriDongVuaBam);
-        
-        
-        String maNhanVien = model.getValueAt(realSelectedRow, 1).toString();
-        String tenNhanVien = model.getValueAt(realSelectedRow, 2).toString();
-        String diaChi = model.getValueAt(realSelectedRow, 3).toString();
-        String ngaySinhStr = model.getValueAt(realSelectedRow, 4).toString(); 
-        String soDienThoai = model.getValueAt(realSelectedRow, 5).toString();
-        String gioiTinh = model.getValueAt(realSelectedRow, 6).toString();
-        String chucVu = model.getValueAt(realSelectedRow, 7).toString(); 
-        String ngayVaoLamStr = model.getValueAt(realSelectedRow, 8).toString(); 
-        String ghiChu = model.getValueAt(realSelectedRow, 9).toString(); 
-      
-        
-      
-        txtma.setText(maNhanVien);
-        txtten.setText(tenNhanVien);
-        txtdiachi.setText(diaChi);
-        txtngaysinh.setText(ngaySinhStr);
-        txtsdt.setText(soDienThoai);
-       
-        if (gioiTinh.equals("Nam")) {
-            rbtnNam.setSelected(true);
-            rbtnNu.setSelected(false);
-        } else {
-            rbtnNam.setSelected(false);
-            rbtnNu.setSelected(true);
+
+        int viTriDongVuaBam = TableNhanVien.getSelectedRow();
+
+        if (viTriDongVuaBam != -1) {
+
+            DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
+            int realSelectedRow = TableNhanVien.convertRowIndexToModel(viTriDongVuaBam);
+
+            String maNhanVien = model.getValueAt(realSelectedRow, 1).toString();
+            String tenNhanVien = model.getValueAt(realSelectedRow, 2).toString();
+            String diaChi = model.getValueAt(realSelectedRow, 3).toString();
+            String ngaySinhStr = model.getValueAt(realSelectedRow, 4).toString();
+            String soDienThoai = model.getValueAt(realSelectedRow, 5).toString();
+            String gioiTinh = model.getValueAt(realSelectedRow, 6).toString();
+            String chucVu = model.getValueAt(realSelectedRow, 7).toString();
+            String ngayVaoLamStr = model.getValueAt(realSelectedRow, 8).toString();
+            String ghiChu = model.getValueAt(realSelectedRow, 9).toString();
+
+            txtma.setText(maNhanVien);
+            txtten.setText(tenNhanVien);
+            txtdiachi.setText(diaChi);
+            txtngaysinh.setText(ngaySinhStr);
+            txtsdt.setText(soDienThoai);
+
+            if (gioiTinh.equals("Nam")) {
+                rbtnNam.setSelected(true);
+                rbtnNu.setSelected(false);
+            } else {
+                rbtnNam.setSelected(false);
+                rbtnNu.setSelected(true);
+            }
+
+            cbxChucVu.setSelectedItem(chucVu);
+
+            txtngayvaolam.setText(ngayVaoLamStr);
+
+            txtchuthich.setText(ghiChu);
+
         }
-      
-        cbxChucVu.setSelectedItem(chucVu);
-       
-        txtngayvaolam.setText(ngayVaoLamStr);
-     
-        txtchuthich.setText(ghiChu);
-       
-    }
     }//GEN-LAST:event_TableNhanVienMouseClicked
 
 
