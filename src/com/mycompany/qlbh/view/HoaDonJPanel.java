@@ -74,7 +74,7 @@ public void ErrorMessageDelete() {
         JTextField tien = txtTongTienHD;
         JTextField MaHD = txtHoaDonHD;
         if (tien.getText().isEmpty() || MaHD.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn CTHD cần xoá.");
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn hóa đơn cần xoá.");
         } else {
             int option = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {

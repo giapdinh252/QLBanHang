@@ -42,7 +42,7 @@ public class UsersDaolmpl implements UsersDao {
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
-            // Đóng các tài nguyên
+            
             try {
                 if (rs != null) {
                     rs.close();

@@ -25,7 +25,7 @@ public class DangKyJDialog extends javax.swing.JDialog {
         initComponents();
     }
 private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
-        JOptionPane.showMessageDialog(new JFrame(), noiDungThongBao,
+        JOptionPane.showMessageDialog(null, noiDungThongBao,
                 tieuDeThongBao, icon);
     }
  private boolean KiemTraChuaChuVaSo(String chuoi) {
