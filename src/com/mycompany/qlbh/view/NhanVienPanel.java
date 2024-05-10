@@ -46,17 +46,17 @@ private void ShowdulieuNhanVien() {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(queryNV);
         while (rs.next()) {
-            Object[] objNV = new Object[11]; // Thêm một cột mới cho tên chức vụ
-            objNV[0] = TableNhanVien.getRowCount() + 1; // Số thứ tự
+            Object[] objNV = new Object[11]; 
+            objNV[0] = TableNhanVien.getRowCount() + 1; 
             objNV[1] = rs.getInt("MaNhanVien");
             objNV[2] = rs.getString("TenNhanVien");
             objNV[3] = rs.getString("DiaChi");
-            objNV[4] = rs.getDate("NgaySinh"); // Ngày sinh
-            objNV[5] = rs.getString("SoDT"); // Đổi "SĐT" thành "SoDT"
+            objNV[4] = rs.getDate("NgaySinh"); 
+            objNV[5] = rs.getString("SoDT"); 
             objNV[6] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ";
-            objNV[7] = rs.getString("TenChucVu"); // Tên chức vụ từ bảng ChucVu
-            objNV[8] = rs.getDate("NgayVaoLam"); // Ngày vào làm
-            objNV[9] = rs.getString("GhiChu"); // Ghi chú
+            objNV[7] = rs.getString("TenChucVu"); 
+            objNV[8] = rs.getDate("NgayVaoLam");
+            objNV[9] = rs.getString("GhiChu"); 
             model.addRow(objNV);
         }
         rs.close();
@@ -74,8 +74,8 @@ private void ShowdulieuNhanVien() {
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(queryNV);
         while (rs.next()) {
-            Object[] objNV = new Object[11]; // Thêm một cột mới cho tên chức vụ
-            objNV[0] = TableTaiKhoan.getRowCount() + 1; // Số thứ tự
+            Object[] objNV = new Object[11];
+            objNV[0] = TableTaiKhoan.getRowCount() + 1; 
             objNV[1] = rs.getInt("MaNhanVien");
             objNV[2] = rs.getString("TenDangNhap");
             objNV[3] = rs.getString("Password"); 
@@ -91,17 +91,17 @@ private void ShowdulieuNhanVien() {
 public void addNhanVien() {
     if (txtten.getText().isEmpty() || txtdiachi.getText().isEmpty() || txtngayvaolam.getText().isEmpty() || txtchuthich.getText().isEmpty() || txtsdt.getText().isEmpty() || txtngaysinh.getText().isEmpty() || cbxChucVu.getSelectedIndex() == -1) {
         JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
-        return; // Không thực hiện thêm nhân viên nếu có trường nhập liệu còn trống
+        return; 
     }
     
     String tenNhanVien = txtten.getText();
-    boolean gioiTinh = rbtnNam.isSelected(); // Kiểm tra nút radio cho giới tính Nam
+    boolean gioiTinh = rbtnNam.isSelected(); 
     String diaChi = txtdiachi.getText();
     String soDienThoai = txtsdt.getText();
     String chucVu = (String) cbxChucVu.getSelectedItem();
     String ghiChu = txtchuthich.getText();
     
-    // Lấy ngày sinh từ JTextField và chuyển đổi sang kiểu dữ liệu Date
+   
     String ngaySinhStr = txtngaysinh.getText();
     Date ngaySinh = null;
     try {
@@ -110,7 +110,7 @@ public void addNhanVien() {
     } catch (ParseException ex) {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ. Vui lòng nhập lại theo định dạng yyyy-MM-dd.");
-        return; // Thoát khỏi phương thức nếu ngày sinh không hợp lệ
+        return; 
     }
 
     Connection conn = null;
@@ -119,7 +119,7 @@ public void addNhanVien() {
     try {
         conn = new MyDBConnection().getConnection();
         
-        // Truy vấn SQL để lấy mã chức vụ từ tên chức vụ
+        
         String queryChucVu = "SELECT MaChucVu FROM ChucVu WHERE TenChucVu = ?";
         pstmt = conn.prepareStatement(queryChucVu);
         pstmt.setString(1, chucVu);
@@ -128,26 +128,26 @@ public void addNhanVien() {
         if (rsChucVu.next()) {
             maChucVu = rsChucVu.getInt("MaChucVu");
         }
-        rsChucVu.close(); // Đóng ResultSet sau khi sử dụng
+        rsChucVu.close(); 
         
         if (maChucVu == -1) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy mã chức vụ cho '" + chucVu + "'");
-            return; // Thoát khỏi phương thức nếu không tìm thấy mã chức vụ
+            return; 
         }
         
-        // SQL query for inserting data into NhanVien table without joining to ChucVu table
+        
         String query = "INSERT INTO NhanVien (TenNhanVien, GioiTinh, DiaChi, SoDT, ChucVu, NgaySinh, NgayVaoLam, GhiChu) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         pstmt = conn.prepareStatement(query);
         
-        // Set values for parameters in the SQL query
+       
         pstmt.setString(1, tenNhanVien);
-        pstmt.setBoolean(2, gioiTinh); // Chuyển đổi giá trị boolean thành kiểu dữ liệu bit
+        pstmt.setBoolean(2, gioiTinh); 
         pstmt.setString(3, diaChi);
         pstmt.setString(4, soDienThoai);
-        pstmt.setInt(5, maChucVu); // Sử dụng mã chức vụ lấy được
-        pstmt.setDate(6, new java.sql.Date(ngaySinh.getTime())); // Chuyển đổi ngày sinh thành kiểu dữ liệu SQL Date
+        pstmt.setInt(5, maChucVu); 
+        pstmt.setDate(6, new java.sql.Date(ngaySinh.getTime())); 
         
-        // Chuyển đổi ngày vào làm từ String thành kiểu dữ liệu SQL Date
+       
         String ngayVaoLamStr = txtngayvaolam.getText();
         SimpleDateFormat sdfNgayVaoLam = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date ngayVaoLamUtil = sdfNgayVaoLam.parse(ngayVaoLamStr);
@@ -155,16 +155,16 @@ public void addNhanVien() {
         
         pstmt.setString(8, ghiChu);
         
-        // Execute the SQL query
+       
         pstmt.executeUpdate();
         
-        // Close the PreparedStatement
+        
         pstmt.close();
         
-        // Notify user that the data has been added successfully
+        
         JOptionPane.showMessageDialog(this, "Thêm nhân viên thành công");
         
-        // Clear input fields after adding data
+        
         clearInputFields();
         
     } catch (SQLException ex) {
@@ -174,7 +174,7 @@ public void addNhanVien() {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(this, "Ngày vào làm không hợp lệ. Vui lòng nhập lại theo định dạng yyyy-MM-dd.");
     } finally {
-        // Close the PreparedStatement and Connection in the finally block
+        
         try {
             if (pstmt != null) pstmt.close();
             if (conn != null) conn.close();
@@ -216,17 +216,17 @@ public void removeNhanVien() {
         DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
         int realSelectedRow = TableNhanVien.convertRowIndexToModel(selectedRow);
 
-        // Lấy thông tin khách hàng từ bảng
-        int maNhanVien = (int) model.getValueAt(realSelectedRow, 1); // Giả sử mã khách hàng là cột thứ hai trong bảng
+       
+        int maNhanVien = (int) model.getValueAt(realSelectedRow, 1); 
 
-        // Xóa khách hàng từ cơ sở dữ liệu
+       
         Connection conn = new MyDBConnection().getConnection();
         try {
             PreparedStatement pstmt = conn.prepareStatement("DELETE FROM NhanVien WHERE MaNhanVien = ?");
             pstmt.setInt(1, maNhanVien);
             int rowsDeleted = pstmt.executeUpdate();
             if (rowsDeleted > 0) {
-                model.removeRow(realSelectedRow); // Xóa hàng từ bảng hiển thị
+                model.removeRow(realSelectedRow); 
                 JOptionPane.showMessageDialog(null, "Nhân Viên đã được xóa thành công từ cơ sở dữ liệu!");
             } else {
                 JOptionPane.showMessageDialog(null, "Không thể xóa nhân viên từ cơ sở dữ liệu! Không có bản ghi nào bị xóa.");
@@ -239,21 +239,21 @@ public void removeNhanVien() {
     }
 }
 public void updateNhanVien() {
-    // Lấy chỉ số hàng được chọn trong bảng
+   
     int selectedRow = TableNhanVien.getSelectedRow();      
     if (selectedRow != -1) {
-        // Lấy thông tin nhân viên từ bảng
+        
         DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
         int realSelectedRow = TableNhanVien.convertRowIndexToModel(selectedRow);
-        int maNhanVien = (int) model.getValueAt(realSelectedRow, 1); // Lấy mã nhân viên từ cột thứ hai trong bảng
+        int maNhanVien = (int) model.getValueAt(realSelectedRow, 1); 
 
-        // Cập nhật thông tin nhân viên từ các trường nhập liệu trên giao diện
+        
         String tenNhanVien = txtten.getText();
         boolean gioiTinh = rbtnNam.isSelected();
         String diaChi = txtdiachi.getText();
         String soDienThoai = txtsdt.getText();
-        String tenChucVu = (String) cbxChucVu.getSelectedItem(); // Lấy tên chức vụ từ combobox
-        // Lấy ngày sinh từ JTextField và chuyển đổi sang định dạng Date
+        String tenChucVu = (String) cbxChucVu.getSelectedItem(); 
+       
         String ngaySinhStr = txtngaysinh.getText();
         Date ngaySinh = null;
         try {
@@ -262,9 +262,9 @@ public void updateNhanVien() {
         } catch (ParseException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Ngày sinh không hợp lệ. Vui lòng nhập lại theo định dạng yyyy-MM-dd.");
-            return; // Thoát khỏi phương thức nếu ngày sinh không hợp lệ
+            return; 
         }
-        // Lấy ngày vào làm từ JTextField và chuyển đổi sang định dạng Date
+      
         String ngayVaoLamStr = txtngayvaolam.getText();
         Date ngayVaoLam = null;
         try {
@@ -273,16 +273,16 @@ public void updateNhanVien() {
         } catch (ParseException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Ngày vào làm không hợp lệ. Vui lòng nhập lại theo định dạng yyyy-MM-dd.");
-            return; // Thoát khỏi phương thức nếu ngày vào làm không hợp lệ
+            return; 
         }
         String ghiChu = txtchuthich.getText();
         
-        // Cập nhật thông tin trong cơ sở dữ liệu
+        
         Connection conn = new MyDBConnection().getConnection();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
-            // Lấy mã chức vụ tương ứng với tên chức vụ
+            
             String chucvuQuery = "SELECT MaChucVu FROM ChucVu WHERE TenChucVu = ?";
             pstmt = conn.prepareStatement(chucvuQuery);
             pstmt.setString(1, tenChucVu);
@@ -292,10 +292,10 @@ public void updateNhanVien() {
                 maChucVu = rs.getInt("MaChucVu");
             } else {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy mã chức vụ tương ứng với tên chức vụ đã chọn.");
-                return; // Thoát khỏi phương thức nếu không tìm thấy mã chức vụ
+                return; 
             }
             
-            // Thực hiện câu truy vấn cập nhật thông tin nhân viên
+           
             String updateQuery = "UPDATE NhanVien SET TenNhanVien = ?, GioiTinh = ?, DiaChi = ?, SoDT = ?, ChucVu = ?, NgaySinh = ?, NgayVaoLam = ?, GhiChu = ? WHERE MaNhanVien = ?";
             pstmt = conn.prepareStatement(updateQuery);
             pstmt.setString(1, tenNhanVien);
@@ -312,12 +312,12 @@ public void updateNhanVien() {
             if (rowsUpdated > 0) {
                 JOptionPane.showMessageDialog(null, "Thông tin nhân viên đã được cập nhật thành công trong cơ sở dữ liệu!");
                 
-                // Cập nhật lại thông tin trong bảng hiển thị
+               
                 model.setValueAt(tenNhanVien, realSelectedRow, 2); 
                 model.setValueAt(gioiTinh ? "Nam" : "Nữ", realSelectedRow, 3); 
                 model.setValueAt(diaChi, realSelectedRow, 4); 
                 model.setValueAt(soDienThoai, realSelectedRow, 5); 
-                model.setValueAt(tenChucVu, realSelectedRow, 6); // Sử dụng tên chức vụ thay vì mã chức vụ
+                model.setValueAt(tenChucVu, realSelectedRow, 6); 
                 model.setValueAt(ngaySinh, realSelectedRow, 7); 
                 model.setValueAt(ngayVaoLam, realSelectedRow, 8); 
                 model.setValueAt(ghiChu, realSelectedRow, 9); 
@@ -328,7 +328,7 @@ public void updateNhanVien() {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi cập nhật thông tin nhân viên trong cơ sở dữ liệu!");
         } finally {
-            // Đóng ResultSet và PreparedStatement
+           
             try {
                 if (rs != null) {
                     rs.close();
@@ -343,30 +343,20 @@ public void updateNhanVien() {
     }
 }
 public void resetNhanVien() {
-    // Đặt lại giá trị của các thành phần nhập liệu
+   
     txtma.setText("");
     txtten.setText("");
-    txtdiachi.setText("Thái Bình");
-    txtsdt.setText("0367348026");
-    txtngaysinh.setText("2003-1-1");
-    txtngayvaolam.setText("2003-1-1");
+    txtdiachi.setText("");
+    txtsdt.setText("");
+    txtngaysinh.setText("");
+    txtngayvaolam.setText("");
     txtchuthich.setText("");
-    
-    // Đặt lại giá trị của các radio button
-    rbtnNam.setSelected(true); // Đặt lại giá trị mặc định cho radio button Nam
-    rbtnNu.setSelected(false); // Đặt lại giá trị mặc định cho radio button Nữ
 
-    // Đặt lại giá trị của JComboBox
-    cbxChucVu.setSelectedIndex(0); // Đặt lại giá trị mặc định cho JComboBox
-
-    // Xóa tất cả các dòng trong bảng
-    DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
-    model.setRowCount(0); // Xóa tất cả các dòng trong bảng
 }
 
 public void displayNhanVien() {
     DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
-    model.setRowCount(0); // Xóa hết dữ liệu trong bảng trước khi hiển thị mới
+    model.setRowCount(0); 
     
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -382,27 +372,27 @@ public void displayNhanVien() {
         rs = pstmt.executeQuery();
         
         while (rs.next()) {
-            Object[] objNV = new Object[10]; // Mảng để lưu thông tin của một nhân viên
+            Object[] objNV = new Object[10]; 
             
-            // Đổ dữ liệu từ ResultSet vào mảng objNV
-            objNV[0] = model.getRowCount() + 1; // Số thứ tự
+            
+            objNV[0] = model.getRowCount() + 1; 
             objNV[1] = rs.getInt("MaNhanVien");
             objNV[2] = rs.getString("TenNhanVien");
             objNV[3] = rs.getString("DiaChi");
-            objNV[4] = rs.getDate("NgaySinh"); // Ngày sinh
+            objNV[4] = rs.getDate("NgaySinh"); 
             objNV[5] = rs.getString("SoDT");
-            objNV[6] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ"; // Giới tính
-            objNV[7] = ""; // Không có thông tin chức vụ nên để trống
-            objNV[8] = rs.getDate("NgayVaoLam"); // Ngày vào làm
-            objNV[9] = rs.getString("GhiChu"); // Ghi chú
+            objNV[6] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ"; 
+            objNV[7] = rs.getString("Chucvu"); 
+            objNV[8] = rs.getDate("NgayVaoLam"); 
+            objNV[9] = rs.getString("GhiChu");
             
-            // Thêm một hàng mới vào bảng
+            
             model.addRow(objNV);
         }
     } catch (SQLException ex) {
         ex.printStackTrace();
     } finally {
-        // Đóng kết nối và các đối tượng Statement và ResultSet
+      
         try {
             if (rs != null) rs.close();
             if (pstmt != null) pstmt.close();
@@ -626,12 +616,12 @@ public void displayNhanVien() {
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(Sửa)
                                 .addComponent(Reset)))))
-                .addContainerGap(192, Short.MAX_VALUE))
+                .addContainerGap(198, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("NhanVien", jPanel1);
 
-        jPanel2.setBackground(new java.awt.Color(153, 255, 255));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
         jLabel10.setText("Tài Khoản");
@@ -657,10 +647,6 @@ public void displayNhanVien() {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(449, 449, 449)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
@@ -675,19 +661,23 @@ public void displayNhanVien() {
                                 .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 368, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(494, 494, 494)
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(32, 32, 32)
+                .addGap(26, 26, 26)
                 .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 474, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(jLabel12)
-                .addContainerGap(97, Short.MAX_VALUE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Tài Khoản", jPanel2);
@@ -702,8 +692,7 @@ public void displayNhanVien() {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
@@ -733,39 +722,39 @@ public void displayNhanVien() {
     }//GEN-LAST:event_SửaActionPerformed
 
     private void ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetActionPerformed
-        // TODO add your handling code here:
+        
         resetNhanVien();
-        displayNhanVien();
+       
     }//GEN-LAST:event_ResetActionPerformed
 
     private void TableNhanVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableNhanVienMouseClicked
-        // TODO add your handling code here:
+        
     int viTriDongVuaBam = TableNhanVien.getSelectedRow();
     
-    if (viTriDongVuaBam != -1) { // Kiểm tra xem người dùng đã chọn một dòng trong bảng chưa
-        // Lấy giá trị từ dòng được chọn trong bảng và hiển thị thông tin tương ứng
+    if (viTriDongVuaBam != -1) { 
+       
         DefaultTableModel model = (DefaultTableModel) TableNhanVien.getModel();
         int realSelectedRow = TableNhanVien.convertRowIndexToModel(viTriDongVuaBam);
         
-        // Lấy thông tin từ bảng và hiển thị trong các ô văn bản hoặc các thành phần khác
+        
         String maNhanVien = model.getValueAt(realSelectedRow, 1).toString();
         String tenNhanVien = model.getValueAt(realSelectedRow, 2).toString();
         String diaChi = model.getValueAt(realSelectedRow, 3).toString();
-        String ngaySinhStr = model.getValueAt(realSelectedRow, 4).toString(); // Giả sử cột 4 chứa ngày sinh
+        String ngaySinhStr = model.getValueAt(realSelectedRow, 4).toString(); 
         String soDienThoai = model.getValueAt(realSelectedRow, 5).toString();
         String gioiTinh = model.getValueAt(realSelectedRow, 6).toString();
-        String chucVu = model.getValueAt(realSelectedRow, 7).toString(); // Giả sử cột 7 chứa chức vụ
-        String ngayVaoLamStr = model.getValueAt(realSelectedRow, 8).toString(); // Giả sử cột 8 chứa ngày vào làm
-        String ghiChu = model.getValueAt(realSelectedRow, 9).toString(); // Giả sử cột 9 chứa chú thích
-        // Tiếp tục lấy các thông tin cần thiết từ bảng
+        String chucVu = model.getValueAt(realSelectedRow, 7).toString(); 
+        String ngayVaoLamStr = model.getValueAt(realSelectedRow, 8).toString(); 
+        String ghiChu = model.getValueAt(realSelectedRow, 9).toString(); 
+      
         
-        // Hiển thị thông tin lấy được lên các ô văn bản hoặc các thành phần khác trên giao diện
+      
         txtma.setText(maNhanVien);
         txtten.setText(tenNhanVien);
         txtdiachi.setText(diaChi);
         txtngaysinh.setText(ngaySinhStr);
         txtsdt.setText(soDienThoai);
-        // Hiển thị giới tính
+       
         if (gioiTinh.equals("Nam")) {
             rbtnNam.setSelected(true);
             rbtnNu.setSelected(false);
@@ -773,13 +762,13 @@ public void displayNhanVien() {
             rbtnNam.setSelected(false);
             rbtnNu.setSelected(true);
         }
-        // Hiển thị chức vụ
+      
         cbxChucVu.setSelectedItem(chucVu);
-        // Hiển thị ngày vào làm
+       
         txtngayvaolam.setText(ngayVaoLamStr);
-        // Hiển thị chú thích
+     
         txtchuthich.setText(ghiChu);
-        // Tiếp tục hiển thị các thông tin cần thiết khác lên giao diện
+       
     }
     }//GEN-LAST:event_TableNhanVienMouseClicked
 

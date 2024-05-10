@@ -37,7 +37,7 @@ public class UsersDaolmpl implements UsersDao {
                 user.setTenDangNhap(rs.getString("TenDangNhap"));
                 user.setPassword(rs.getString("Password"));
                 user.setQuyen(rs.getString("Quyen"));
-                user.setChuThich(rs.getString("ChuThich"));
+                user.setChuThich(rs.getString("ChuThich"));                              
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

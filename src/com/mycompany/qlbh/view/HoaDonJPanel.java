@@ -39,10 +39,11 @@ public class HoaDonJPanel extends javax.swing.JPanel {
     
    public HoaDonJPanel() {
         initComponents(); 
+        ShowdulieuHoaDon();
         ThemNhanvien();
         ThemKhachHang(); 
         ThemSP();
-        ShowdulieuHoaDon();
+       
     
        
         
@@ -119,11 +120,11 @@ try {
         if (rsNhanVien.next()) {
             int maNhanVien = rsNhanVien.getInt("MaNhanVien");
 
-           
+          
          String queryNV = "INSERT INTO HoaDon (MaKhachHang, MaNhanVien, TongTien, GhiChu) " +
                  "VALUES (" + maKhachHang + ", " + maNhanVien + ", " + 
                  TongTien + ", '" + Ghichu + "')";
-
+                          
             int rowsInserted = stmt.executeUpdate(queryNV);
             if (rowsInserted > 0) {
                 System.out.println("Dữ liệu đã được chèn thành công!");
@@ -147,8 +148,7 @@ try {
         if(txt.isEmpty()){
             return;
         }
-        int maHoaDon = Integer.parseInt(txt);
-       
+        int maHoaDon = Integer.parseInt(txt);      
     String querychitietHD = "DELETE FROM ChiTietHoaDon WHERE MaHoaDon = ?";
     Connection conn = new MyDBConnection().getConnection();
     try (PreparedStatement pstmt = conn.prepareStatement(querychitietHD)) {
@@ -192,7 +192,7 @@ try {
 
           
            String queryNV = "DELETE FROM HoaDon " +
-                 "WHERE MaKhachHang = " + maKhachHang +" AND MaHoaDon = " + mahoadon + " AND MaNhanVien = " + maNhanVien + " AND TongTien = " + TongTien + " AND (GhiChu = '' OR GhiChu = '"+ Ghichu +"')";
+                 "WHERE  MaHoaDon = " + mahoadon ;
         
             int rowsInserted = stmt.executeUpdate(queryNV);
            
@@ -228,7 +228,8 @@ try {
     }
 //    --------------------------------------------------------------------------------------
 public void showDetail(){
-        int i= TableHoaDon.getSelectedRow();            
+        int i= TableHoaDon.getSelectedRow();     
+            System.out.println(i);
         HoaDonBan hd=Hoadon.get(i);
         txtHoaDonHD.setText(String.valueOf(hd.getMaHoaDon()));     
         GhiChuHoaDon.setText(hd.getGhichu());
@@ -287,22 +288,24 @@ try{
          ResultSet rs = stmt.executeQuery(query);                       
             while (rs.next()) {        
                 HoaDonBan gg = new HoaDonBan();
-                Object obj[]=new Object[10];              
-                obj[0]=TableHoaDon.getRowCount()+1;               
-                obj[1]=rs.getInt("MaHoaDon");
-                obj[2]=rs.getString("TenNhanVien");
-                obj[3]=rs.getString("TenKhachHang"); 
-                obj[4]=rs.getDate("NgayLapHoaDon");
-                obj[5]=rs.getString("TongTien");
-                obj[6]=rs.getString("GhiChu");                 
-                model.addRow(obj); 
                  gg.setMaHoaDon(rs.getInt("MaHoaDon"));
                 gg.setNhanvien(rs.getString("TenNhanVien"));
                 gg.setKhachhang(rs.getString("TenKhachHang"));
                 gg.setNgayBan(rs.getString("NgayLapHoaDon"));
                 gg.setTongTien(rs.getDouble("TongTien"));
                 gg.setGhichu(rs.getString("GhiChu"));                
-                 Hoadon.add(gg);                                     
+                 Hoadon.add(gg); 
+                Object obj[]=new Object[10];              
+                obj[0]=TableHoaDon.getRowCount();               
+                obj[1]=rs.getInt("MaHoaDon");
+                obj[2]=rs.getString("TenNhanVien");
+                obj[3]=rs.getString("TenKhachHang"); 
+                obj[4]=rs.getDate("NgayLapHoaDon");
+                obj[5]=rs.getDouble("TongTien");
+                obj[6]=rs.getString("GhiChu");                 
+                model.addRow(obj); 
+              
+              
             }
             rs.close();
     } catch (SQLException ex) {       
@@ -374,7 +377,11 @@ try{
 public void TinhTienSP() {
     int SoLuong = 0;
     double Tien = 0;
+    
     String soLuongText = txtSoLuong.getText();
+    if(soLuongText.isEmpty()){
+        return;
+    }
         SoLuong = Integer.parseInt(soLuongText);
             
     double Gia = GetGiaSanPham();
@@ -1149,15 +1156,13 @@ try{
          
     
     private void ThemHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemHoaDonActionPerformed
-       
-        ErrorMessage();
+
+       ErrorMessage();
        addHoaDonBan();
        ShowdulieuHoaDon();
-       showDetail();
-       
-       
-       
       
+       
+        
     }//GEN-LAST:event_ThemHoaDonActionPerformed
 
     private void SuaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SuaHoaDonActionPerformed
@@ -1167,6 +1172,7 @@ try{
 
     private void ResetHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResetHoaDonActionPerformed
       reset();
+      
     }//GEN-LAST:event_ResetHoaDonActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -1194,15 +1200,16 @@ try{
     }//GEN-LAST:event_txtHoaDonHDMouseClicked
 
     private void TableHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableHoaDonMouseClicked
-     ShowdulieuCTHD();
+     
     showDetail();
+    ShowdulieuCTHD();
    
     }//GEN-LAST:event_TableHoaDonMouseClicked
 
     private void XoaHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaHoaDonActionPerformed
         removeCTHD();
         ErrorMessageDelete();
-        updateSTTColumnHoaDon();
+       ShowdulieuHoaDon();
         
     }//GEN-LAST:event_XoaHoaDonActionPerformed
 
@@ -1255,7 +1262,7 @@ try{
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
        XoaCTHD();
-       updateSTTColumnCTHD();
+       ShowdulieuCTHD();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

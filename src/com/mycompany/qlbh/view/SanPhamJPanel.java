@@ -576,6 +576,11 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
 
         jLabel17.setText("Loại Sản Phẩm");
 
+        MaSP.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MaSPMouseClicked(evt);
+            }
+        });
         MaSP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MaSPActionPerformed(evt);
@@ -931,6 +936,10 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
     private void CheckMaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckMaSPActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_CheckMaSPActionPerformed
+
+    private void MaSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MaSPMouseClicked
+        MaSP.setEditable(false);
+    }//GEN-LAST:event_MaSPMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

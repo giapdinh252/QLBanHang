@@ -55,9 +55,13 @@ public class DangNhapJDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Mật Khẩu");
 
-        btnSubmit.setBackground(new java.awt.Color(51, 255, 255));
         btnSubmit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnSubmit.setText("Đăng Nhập");
+        btnSubmit.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnSubmitMouseClicked(evt);
+            }
+        });
 
         jLabel3.setBackground(new java.awt.Color(0, 255, 255));
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -68,7 +72,6 @@ public class DangNhapJDialog extends javax.swing.JDialog {
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mycompany/qlbh/icon/hinhdangnhap.jpg"))); // NOI18N
 
-        chuyensangdangky.setBackground(new java.awt.Color(51, 255, 255));
         chuyensangdangky.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         chuyensangdangky.setText("Đăng Ký");
         chuyensangdangky.addActionListener(new java.awt.event.ActionListener() {
@@ -142,45 +145,21 @@ public class DangNhapJDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void chuyensangdangkyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chuyensangdangkyActionPerformed
-        // TODO add your handling code here:
-        // Đóng form đăng nhập
+      
         this.dispose();
-        DangKyJDialog dangkyDialog = new DangKyJDialog((java.awt.Frame) this.getParent(), true);
-       // Hiển thị form đăng nhập
+        DangKyJDialog dangkyDialog = new DangKyJDialog((java.awt.Frame) this.getParent(), true);       
        dangkyDialog.setVisible(true);
     }//GEN-LAST:event_chuyensangdangkyActionPerformed
+
+    private void btnSubmitMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSubmitMouseClicked
+        
+    }//GEN-LAST:event_btnSubmitMouseClicked
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DangNhapJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DangNhapJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DangNhapJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DangNhapJDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the dialog */
+                    
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 DangNhapJDialog dialog = new DangNhapJDialog(new javax.swing.JFrame(), true);

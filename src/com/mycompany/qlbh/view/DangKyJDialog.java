@@ -75,7 +75,6 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
 
         jLabel4.setText("Nhập lại mật khẩu");
 
-        Themtaikhoan.setBackground(new java.awt.Color(153, 255, 255));
         Themtaikhoan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Themtaikhoan.setText("Thêm");
         Themtaikhoan.addActionListener(new java.awt.event.ActionListener() {
@@ -84,7 +83,6 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
             }
         });
 
-        chuyensangdangnhap.setBackground(new java.awt.Color(153, 255, 255));
         chuyensangdangnhap.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         chuyensangdangnhap.setText("Đăng nhập");
         chuyensangdangnhap.addActionListener(new java.awt.event.ActionListener() {
@@ -104,7 +102,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(27, Short.MAX_VALUE)
+                .addContainerGap(26, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -123,7 +121,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
                             .addComponent(txtMaNhanVien, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtRetypePasswword, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(22, 22, 22))
+                .addGap(26, 26, 26))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -172,7 +170,7 @@ private void ThongBao(String noiDungThongBao, String tieuDeThongBao, int icon) {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
- public static int quyen = 0;
+    public static int quyen = 0;
     public static String ten = "";
     private void ThemtaikhoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemtaikhoanActionPerformed
         // TODO add your handling code here:

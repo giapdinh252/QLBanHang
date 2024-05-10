@@ -68,12 +68,12 @@ public class DangNhapController {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                btnSubmit.setBackground(new Color(0, 200, 83));
+                btnSubmit.setBackground(new Color(153, 153, 153));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                btnSubmit.setBackground(new Color(100, 221, 23));
+                btnSubmit.setBackground(new Color(242, 242, 242));
             }
         });
     }

@@ -28,7 +28,7 @@ public class TrangChuJPanel1 extends javax.swing.JPanel {
 
         jPanel2 = new javax.swing.JPanel();
 
-        jPanel2.setBackground(new java.awt.Color(255, 204, 51));
+        jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
