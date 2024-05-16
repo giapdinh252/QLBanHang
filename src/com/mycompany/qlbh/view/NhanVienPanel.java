@@ -365,7 +365,7 @@ public void displayNhanVien() {
     try {
         conn = new MyDBConnection().getConnection();
         
-        String query = "SELECT MaNhanVien, TenNhanVien, DiaChi, NgaySinh, SoDT, GioiTinh, NgayVaoLam, GhiChu " +
+        String query = "SELECT MaNhanVien, TenNhanVien, DiaChi, NgaySinh, SoDT, GioiTinh,ChucVu, NgayVaoLam, GhiChu " +
                        "FROM NhanVien";
         
         pstmt = conn.prepareStatement(query);
@@ -380,7 +380,7 @@ public void displayNhanVien() {
             objNV[2] = rs.getString("TenNhanVien");
             objNV[3] = rs.getString("DiaChi");
             objNV[4] = rs.getDate("NgaySinh"); 
-            objNV[5] = rs.getInt("SoDT");
+            objNV[5] = rs.getString("SoDT");
             objNV[6] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ"; 
             objNV[7] = rs.getString("Chucvu"); 
             objNV[8] = rs.getDate("NgayVaoLam"); 
