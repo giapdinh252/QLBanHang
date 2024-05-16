@@ -380,7 +380,7 @@ public void displayNhanVien() {
             objNV[2] = rs.getString("TenNhanVien");
             objNV[3] = rs.getString("DiaChi");
             objNV[4] = rs.getDate("NgaySinh"); 
-            objNV[5] = rs.getString("SoDT");
+            objNV[5] = rs.getInt("SoDT");
             objNV[6] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ"; 
             objNV[7] = rs.getString("Chucvu"); 
             objNV[8] = rs.getDate("NgayVaoLam"); 

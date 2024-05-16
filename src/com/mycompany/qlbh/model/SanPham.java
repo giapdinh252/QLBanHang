@@ -11,7 +11,7 @@ package com.mycompany.qlbh.model;
 public class SanPham {
     private int MaSanPham;
     private String TenSanPham;
-    private int LoaiSanPham;
+    private String TenLoaiSanPham;
     private int DonGiaBan;
     private int DonGiaNhap;
     private int HangSanXuat;
@@ -19,10 +19,10 @@ public class SanPham {
     private int TonKho;
     public SanPham(){
     }
-    public SanPham(int MaSanPham, String TenSanPham, int LoaiSanPham, int DonGiaBan, int DonGiaNhap, int HangSanXuat, String Ghichu,int TonKho) {
+    public SanPham(int MaSanPham, String TenSanPham, String LoaiSanPham, int DonGiaBan, int DonGiaNhap, int HangSanXuat, String Ghichu,int TonKho) {
         this.MaSanPham = MaSanPham;
         this.TenSanPham = TenSanPham;
-        this.LoaiSanPham = LoaiSanPham;
+        this.TenLoaiSanPham = TenLoaiSanPham;
         this.DonGiaBan = DonGiaBan;
         this.DonGiaNhap = DonGiaNhap;
         this.HangSanXuat = HangSanXuat;
@@ -55,12 +55,12 @@ public class SanPham {
         this.TenSanPham = TenSanPham;
     }
 
-    public int getLoaiSanPham() {
-        return LoaiSanPham;
+    public String getLoaiSanPham() {
+        return TenLoaiSanPham;
     }
 
-    public void setLoaiSanPham(int LoaiSanPham) {
-        this.LoaiSanPham = LoaiSanPham;
+    public void setLoaiSanPham(String TenLoaiSanPham) {
+        this.TenLoaiSanPham = TenLoaiSanPham;
     }
 
     public int getDonGiaBan() {

@@ -301,6 +301,8 @@ public class MainJFrame extends javax.swing.JFrame {
     private void jlbDangXuatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlbDangXuatMouseClicked
          this.dispose();
          DangNhapJDialog dialog = new DangNhapJDialog(null,true);
+         
+         
          dialog.setVisible(true);
     }//GEN-LAST:event_jlbDangXuatMouseClicked
 

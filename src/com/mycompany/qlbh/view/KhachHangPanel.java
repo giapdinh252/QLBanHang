@@ -172,7 +172,7 @@ public void displayKhachHang() {
             objKH[3] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ";
             objKH[4] = rs.getString("DiaChi");
             objKH[5] = rs.getString("SDT");
-            objKH[6] = "";
+            objKH[6] = rs.getString("LoaiKhachHang");
             objKH[7] = rs.getString("GhiChu");
             objKH[8] = rs.getDate("NgaySinh");
             model.addRow(objKH); 

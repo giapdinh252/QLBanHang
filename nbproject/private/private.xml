@@ -8,6 +8,7 @@
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/MyDBConnection.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/controller/DangNhapController.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/service/UsersService.java</file>
+            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/model/SanPham.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/Dao/UsersDaolmpl.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/service/UsersServiceImpl.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/Dao/UsersDao.java</file>
@@ -17,6 +18,7 @@
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/KhachHangPanel.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/MyDBConnection.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/qlbanhang/QLBanHang.java</file>
+            <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/SanPhamJPanel.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/view/DangKyJDialog.java</file>
             <file>file:/C:/Users/Dinh%20Giap/Documents/NetBeansProjects/QLBanHang/src/com/mycompany/qlbh/bean/DanhMucBean.java</file>
         </group>

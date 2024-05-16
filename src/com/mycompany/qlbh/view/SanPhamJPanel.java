@@ -36,42 +36,48 @@ public class SanPhamJPanel extends javax.swing.JPanel {
         
     }
      public void ShowdulieuSP() {    
-    DefaultTableModel model = (DefaultTableModel)TableSanPham.getModel();
+    DefaultTableModel model = (DefaultTableModel) TableSanPham.getModel();
     Connection conn = new MyDBConnection().getConnection();
-    model.setRowCount(0);       
-        try{             
-String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat,TonKho,ChuThich " +
-               "FROM SanPham " ;                                                                           
-         Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery(query);                       
-            while (rs.next()) {        
-                SanPham spp =new  SanPham();
-                Object obj[]=new Object[10];              
-                obj[0]=TableSanPham.getRowCount()+1;               
-                obj[1]=rs.getInt("MaSanPham");
-                obj[2]=rs.getString("TenSanPham");
-                obj[3]=rs.getInt("MaLoaiSanPham"); 
-                obj[4] = rs.getDouble("GiaNhap");
-                obj[5]=rs.getDouble("GiaBan");
-                obj[6]=rs.getInt("MaHangSanXuat");
-                obj[7]=rs.getInt("TonKho");
-                obj[8]=rs.getString("ChuThich"); 
-                model.addRow(obj); 
-                spp.setMaSanPham(rs.getInt("MaSanPham"));
-                spp.setTenSanPham(rs.getString("TenSanPham"));
-                spp.setLoaiSanPham(rs.getInt("MaLoaiSanPham"));
-                spp.setDonGiaNhap(rs.getInt("GiaNhap"));
-                spp.setDonGiaBan(rs.getInt("GiaBan"));
-                spp.setHangSanXuat(rs.getInt("MaHangSanXuat"));
-                spp.setTonKho(rs.getInt("TonKho"));
-                spp.setGhichu(rs.getString("ChuThich"));
-                sp.add(spp);
-            }
-            rs.close();
-    } catch (SQLException ex) {       
+    model.setRowCount(0);
+    try {
+        String query = "SELECT MaSanPham, TenSanPham, TenLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich " +
+                       "FROM SanPham " +
+                       "JOIN LoaiSanPham ON LoaiSanPham.MaLoaiSanPham = SanPham.MaLoaiSanPham";
+
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()) {
+            Object[] rowData = new Object[10];
+            rowData[0] = TableSanPham.getRowCount()+1;
+            rowData[1] = rs.getInt("MaSanPham");
+            rowData[2] = rs.getString("TenSanPham");
+            rowData[3] = rs.getString("TenLoaiSanPham");
+            rowData[4] = rs.getDouble("GiaNhap");
+            rowData[5] = rs.getDouble("GiaBan");
+            rowData[6] = rs.getInt("MaHangSanXuat");
+            rowData[7] = rs.getInt("TonKho");
+            rowData[8] = rs.getString("ChuThich");
+            model.addRow(rowData);
+            SanPham gg = new SanPham();
+                 gg.setMaSanPham(rs.getInt("MaSanPham"));
+                gg.setTenSanPham(rs.getString("TenSanPham"));
+                gg.setLoaiSanPham(rs.getString("TenLoaiSanPham"));
+                gg.setDonGiaNhap( rs.getInt("GiaNhap"));
+                gg.setDonGiaBan(rs.getInt("GiaBan"));
+                gg.setHangSanXuat(rs.getInt("MaHangSanXuat"));
+                gg.setTonKho(rs.getInt("TonKho"));
+                gg.setGhichu(rs.getString("ChuThich"));                
+                 sp.add(gg);
+                    
+          
+        }
+        
+    } catch (SQLException ex) {
         ex.printStackTrace();
     }
 }
+ 
+
      public int MaLoaiSP(){
         
          int Ten = 0;
@@ -117,25 +123,23 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
 public void showDetail() {
     int i = TableSanPham.getSelectedRow();            
     SanPham hd = sp.get(i);
-    String Ten = null;
+  
     String Hang = null;
     
     try {
         Connection conn = new MyDBConnection().getConnection();
-        String SQL1 = "SELECT TenLoaiSanPham FROM LoaiSanPham WHERE MaLoaiSanPham = ?";
+       
         String SQL2 = "SELECT TenHangSanXuat FROM HangSanXuat WHERE MaHangSanXuat = ?";
 
-        PreparedStatement pstmt1 = conn.prepareStatement(SQL1);
+        
         PreparedStatement pstmt2 = conn.prepareStatement(SQL2);
-        pstmt1.setInt(1, hd.getLoaiSanPham());
+        
         pstmt2.setInt(1, hd.getHangSanXuat());
         
-        ResultSet rs1 = pstmt1.executeQuery();
+       
         ResultSet rs2 = pstmt2.executeQuery();
       
-        while (rs1.next()) {
-            Ten = rs1.getString("TenLoaiSanPham");
-        }
+        
         while (rs2.next()) {
             Hang = rs2.getString("TenHangSanXuat");
         }
@@ -146,12 +150,12 @@ public void showDetail() {
         e.printStackTrace();
     }
     
-    System.out.println(Ten);
-    System.out.println(Hang);
     
+    System.out.println(Hang);
+    System.out.println(i);
     MaSP.setText(String.valueOf(hd.getMaSanPham()));     
     TenSP.setText(hd.getTenSanPham());
-    LoaiSanPham.setSelectedItem(Ten);
+    LoaiSanPham.setSelectedItem(hd.getLoaiSanPham());
     GiaBan.setText(String.valueOf(hd.getDonGiaBan()));
     GiaNhap.setText(String.valueOf(hd.getDonGiaNhap()));   
     HangSX.setSelectedItem(Hang);      
@@ -412,9 +416,10 @@ try{
     Connection conn = new MyDBConnection().getConnection();
     model.setRowCount(0);       
         try{             
-String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich " +
-               "FROM SanPham " +
-               "WHERE MaSanPham = " + masp;
+String query = "SELECT MaSanPham, TenSanPham, TenLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich \n" +
+"               FROM SanPham \n" +
+"              JOIN LoaiSanPham ON LoaiSanPham.MaLoaiSanPham = SanPham.MaLoaiSanPham\n" +
+"               WHERE MaSanPham ="+masp ;
                                                                                     
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(query);                       
@@ -424,7 +429,7 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
                 obj[0]=TableSanPham.getRowCount()+1;               
                 obj[1]=rs.getInt("MaSanPham");
                 obj[2]=rs.getString("TenSanPham");
-                obj[3]=rs.getInt("MaLoaiSanPham"); 
+                obj[3]=rs.getString("TenLoaiSanPham"); 
                 obj[4] = rs.getDouble("GiaNhap");
                 obj[5]=rs.getDouble("GiaBan");
                 obj[6]=rs.getInt("MaHangSanXuat");
@@ -446,20 +451,20 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
     Connection conn = new MyDBConnection().getConnection();
     model.setRowCount(0);       
         try{             
-String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich " +
-               "FROM SanPham " +
+String query = "SELECT MaSanPham, TenSanPham, TenLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich \n" +
+"               FROM SanPham \n" +
+"              JOIN LoaiSanPham ON LoaiSanPham.MaLoaiSanPham = SanPham.MaLoaiSanPham\n" +
                "WHERE TenSanPham like N'" + tensp + "%'";
 
                                                                                     
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(query);                       
-            while (rs.next()) {        
-                SanPham spp =new  SanPham();
+            while (rs.next()) {                       
                 Object obj[]=new Object[10];              
                 obj[0]=TableSanPham.getRowCount()+1;               
                 obj[1]=rs.getInt("MaSanPham");
                 obj[2]=rs.getString("TenSanPham");
-                obj[3]=rs.getInt("MaLoaiSanPham"); 
+                obj[3]=rs.getString("TenLoaiSanPham"); 
                 obj[4] = rs.getDouble("GiaNhap");
                 obj[5]=rs.getDouble("GiaBan");
                 obj[6]=rs.getInt("MaHangSanXuat");
@@ -479,9 +484,10 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
     Connection conn = new MyDBConnection().getConnection();
     model.setRowCount(0);       
         try{             
-String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich " +
-               "FROM SanPham " +
-               "WHERE MaLoaiSanPham = N'" + MaLoaiSP1() + "'";
+String query = "SELECT MaSanPham, TenSanPham, TenLoaiSanPham, GiaNhap, GiaBan, MaHangSanXuat, TonKho, ChuThich \n" +
+"               FROM SanPham \n" +
+"              JOIN LoaiSanPham ON LoaiSanPham.MaLoaiSanPham = SanPham.MaLoaiSanPham\n" +
+               "WHERE SanPham.MaLoaiSanPham = N'" + MaLoaiSP1() + "'";
 
                                                                                     
          Statement stmt = conn.createStatement();
@@ -492,7 +498,7 @@ String query = "SELECT MaSanPham, TenSanPham, MaLoaiSanPham, GiaNhap, GiaBan, Ma
                 obj[0]=TableSanPham.getRowCount()+1;               
                 obj[1]=rs.getInt("MaSanPham");
                 obj[2]=rs.getString("TenSanPham");
-                obj[3]=rs.getInt("MaLoaiSanPham"); 
+                obj[3]=rs.getString("TenLoaiSanPham"); 
                 obj[4] = rs.getDouble("GiaNhap");
                 obj[5]=rs.getDouble("GiaBan");
                 obj[6]=rs.getInt("MaHangSanXuat");

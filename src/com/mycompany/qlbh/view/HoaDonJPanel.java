@@ -373,7 +373,9 @@ try{
         txtTongTienHD.setText("");
         GhiChuHoaDon.setText("");
     }
+
 //-------------------------------------------Chi Tiết Hóa Đơn---------------------------------------------------------------------
+
 public void TinhTienSP() {
     int SoLuong = 0;
     double Tien = 0;
@@ -382,12 +384,21 @@ public void TinhTienSP() {
     if(soLuongText.isEmpty()){
         return;
     }
+   
+    if(Integer.parseInt(soLuongText) > GetSLSanPham()){
+        JOptionPane.showMessageDialog(null, "Số lượng sản phẩm không đủ trong kho.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return;
+    }else{
         SoLuong = Integer.parseInt(soLuongText);
-            
     double Gia = GetGiaSanPham();
     Tien = Gia * SoLuong;
     txtTongTienCTHD.setText(String.valueOf(Tien));
+    }
+    
+   
+    
 }
+
 public void batLoiSL(){
     int SoLuong = 0;
     
@@ -409,18 +420,38 @@ if (!soLuongText.isEmpty()) {
 }
 
 }
-
+public double GetSLSanPham() {
+    String TenSP = jcbSanPham.getSelectedItem().toString();
+    
+    
+    int Sl=0;
+    try (Connection conn = new MyDBConnection().getConnection();
+         PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM SanPham WHERE TenSanPham = ?")) {
+        pstmt.setString(1, TenSP);
+        ResultSet rsSP = pstmt.executeQuery();
+        if (rsSP.next()) {
+            
+            Sl=rsSP.getInt("TonKho");
+        }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    }   
+    System.out.println(Sl);
+    
+    return Sl;
+}
 public double GetGiaSanPham() {
     String TenSP = jcbSanPham.getSelectedItem().toString();
     
     double Gia=0;
-
+    
     try (Connection conn = new MyDBConnection().getConnection();
-         PreparedStatement pstmt = conn.prepareStatement("SELECT GiaBan FROM SanPham WHERE TenSanPham = ?")) {
+         PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM SanPham WHERE TenSanPham = ?")) {
         pstmt.setString(1, TenSP);
         ResultSet rsSP = pstmt.executeQuery();
         if (rsSP.next()) {
             Gia = rsSP.getDouble("GiaBan");
+          
         }
     } catch (SQLException ex) {
         ex.printStackTrace();
@@ -570,7 +601,7 @@ try{
     int MaSanPham=MaSanPham();
     String Ghichu=GhiChuCTHD.getText();
     Connection conn = new MyDBConnection().getConnection();
-    if(SoLuong>0){
+    if(SoLuong>0 && SoLuong<GetSLSanPham()){
         try {             
     Statement stmt = conn.createStatement();              
          String queryNV = "INSERT INTO ChiTietHoaDon ( MaHoaDon,MaSanPham,SoLuong, TongTien, ChiTietHoaDon.GhiChu) " +
