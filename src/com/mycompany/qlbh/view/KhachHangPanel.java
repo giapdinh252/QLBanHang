@@ -47,7 +47,7 @@ public void addKhachHang() {
     boolean gioiTinh = rdtnNam.isSelected(); 
     String diaChi = txtdiachi.getText();
     String soDienThoai = txtsdt.getText();
-    String loaiKhachHang = (String) cbxloai.getSelectedItem();
+    String tenLoaiKhachHang = (String) cbxloai.getSelectedItem(); // Lấy tên loại khách hàng từ ComboBox
     String ghiChu = txtghichu.getText();
     
    
@@ -69,10 +69,10 @@ public void addKhachHang() {
     try {
         conn = new MyDBConnection().getConnection();
         
-       
+        // Lấy mã loại khách hàng từ tên loại khách hàng
         String queryLoaiKhachHang = "SELECT MaLoaiKhachHang FROM LoaiKhachHang WHERE TenLoaiKhachHang = ?";
         pstmt = conn.prepareStatement(queryLoaiKhachHang);
-        pstmt.setString(1, loaiKhachHang);
+        pstmt.setString(1, tenLoaiKhachHang);
         ResultSet rsLoaiKhachHang = pstmt.executeQuery();
         int maLoaiKhachHang = -1;
         if (rsLoaiKhachHang.next()) {
@@ -81,27 +81,24 @@ public void addKhachHang() {
         rsLoaiKhachHang.close(); 
         
         if (maLoaiKhachHang == -1) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy mã loại khách hàng cho '" + loaiKhachHang + "'");
+            JOptionPane.showMessageDialog(this, "Không tìm thấy mã loại khách hàng cho '" + tenLoaiKhachHang + "'");
             return;
         }
         
-       
-        String query = "INSERT INTO KhachHang (TenKhachHang, GioiTinh, NgaySinh, DiaChi, SDT,LoaiKhachHang, GhiChu) VALUES (?, ?, ?, ?, ?, ?,?)";
+        // Thêm khách hàng vào cơ sở dữ liệu
+        String query = "INSERT INTO KhachHang (TenKhachHang, GioiTinh, NgaySinh, DiaChi, SDT, LoaiKhachHang, GhiChu) VALUES (?, ?, ?, ?, ?, ?, ?)";
         pstmt = conn.prepareStatement(query);
-        
         
         pstmt.setString(1, tenKhachHang);
         pstmt.setBoolean(2, gioiTinh); 
         pstmt.setDate(3, new java.sql.Date(ngaySinh.getTime())); 
         pstmt.setString(4, diaChi);
         pstmt.setString(5, soDienThoai);
-        pstmt.setInt(6, maLoaiKhachHang);
+        pstmt.setInt(6, maLoaiKhachHang); // Sử dụng mã loại khách hàng
         pstmt.setString(7, ghiChu);
               
         pstmt.executeUpdate();
                
-        pstmt.close();
-                
         JOptionPane.showMessageDialog(this, "Thêm khách hàng thành công");
               
         clearInputFields();
@@ -110,7 +107,6 @@ public void addKhachHang() {
         ex.printStackTrace();
         JOptionPane.showMessageDialog(this, "Lỗi khi thêm khách hàng: " + ex.getMessage());
     } finally {
-       
         try {
             if (pstmt != null) pstmt.close();
             if (conn != null) conn.close();
@@ -119,6 +115,8 @@ public void addKhachHang() {
         }
     }
 }
+
+
 
 
 private void clearInputFields() {
@@ -158,8 +156,8 @@ public void displayKhachHang() {
     try {
         conn = new MyDBConnection().getConnection();
         
-        
-        String query = "SELECT * FROM KhachHang";
+        // Thay đổi truy vấn để lấy tên loại khách hàng thay vì mã loại khách hàng
+        String query = "SELECT kh.*, lk.TenLoaiKhachHang FROM KhachHang kh JOIN LoaiKhachHang lk ON kh.LoaiKhachHang = lk.MaLoaiKhachHang";
         pstmt = conn.prepareStatement(query);
         rs = pstmt.executeQuery();
         
@@ -172,7 +170,7 @@ public void displayKhachHang() {
             objKH[3] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ";
             objKH[4] = rs.getString("DiaChi");
             objKH[5] = rs.getString("SDT");
-            objKH[6] = rs.getString("LoaiKhachHang");
+            objKH[6] = rs.getString("TenLoaiKhachHang"); // Lấy tên loại khách hàng thay vì mã loại khách hàng
             objKH[7] = rs.getString("GhiChu");
             objKH[8] = rs.getDate("NgaySinh");
             model.addRow(objKH); 
@@ -180,7 +178,6 @@ public void displayKhachHang() {
     } catch (SQLException ex) {
         ex.printStackTrace();
     } finally {
-       
         try {
             if (rs != null) rs.close();
             if (pstmt != null) pstmt.close();
@@ -190,6 +187,7 @@ public void displayKhachHang() {
         }
     }
 }
+
 
 
 

@@ -365,8 +365,8 @@ public void displayNhanVien() {
     try {
         conn = new MyDBConnection().getConnection();
         
-        String query = "SELECT MaNhanVien, TenNhanVien, DiaChi, NgaySinh, SoDT, GioiTinh,ChucVu, NgayVaoLam, GhiChu " +
-                       "FROM NhanVien";
+        String query = "SELECT nv.MaNhanVien, nv.TenNhanVien, nv.DiaChi, nv.NgaySinh, nv.SoDT, nv.GioiTinh, cv.TenChucVu, nv.NgayVaoLam, nv.GhiChu " +
+                       "FROM NhanVien nv JOIN ChucVu cv ON nv.ChucVu = cv.MaChucVu";
         
         pstmt = conn.prepareStatement(query);
         rs = pstmt.executeQuery();
@@ -382,7 +382,7 @@ public void displayNhanVien() {
             objNV[4] = rs.getDate("NgaySinh"); 
             objNV[5] = rs.getString("SoDT");
             objNV[6] = rs.getBoolean("GioiTinh") ? "Nam" : "Nữ"; 
-            objNV[7] = rs.getString("Chucvu"); 
+            objNV[7] = rs.getString("TenChucVu"); // Sử dụng tên chức vụ thay vì mã chức vụ
             objNV[8] = rs.getDate("NgayVaoLam"); 
             objNV[9] = rs.getString("GhiChu");
             
@@ -401,7 +401,8 @@ public void displayNhanVien() {
             ex.printStackTrace();
         }
     }
-}   
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
